@@ -177,13 +177,41 @@
     </div>
 
     <script>
-        // Kunci Penyimpanan Baru (v3) untuk Mereset Cache Lama
-        const STORAGE_KEY = "iqbal_portfolio_apps_v3";
+        // Versi LocalStorage V4 untuk mereset cache aplikasi di semua browser
+        const STORAGE_KEY = "iqbal_portfolio_apps_v4";
 
+        // DATA DEFAULT DENGAN NAMA & DESKRIPSI TERBARU
         const defaultApps = [
-            { id: "1", title: "Database OS", category: "Database & Data", desc: "Sistem pengelolaan dan visualisasi database terpusat untuk mempermudah pemantauan struktur data dan eksekusi query.", url: "https://share.streamlit.io/iqbalmantam/databaseos", file: "databaseos · main · app.py", tags: ["Python", "Streamlit", "PostgreSQL"], icon: "database" },
-            { id: "2", title: "Mantam App", category: "Core Tools", desc: "Platform ekosistem utama yang mengintegrasikan berbagai utilitas operasional dan otomatisasi alur kerja.", url: "https://share.streamlit.io/iqbalmantam/mantam-app", file: "mantam-app · main · app.py", tags: ["Python", "Streamlit", "Automation"], icon: "cpu" },
-            { id: "3", title: "Online Test Platform", category: "Assessment & Test", desc: "Aplikasi ujian & evaluasi berbasis online yang dilengkapi fitur pengerjaan soal interaktif dan kalkulasi rekap hasil uji.", url: "https://share.streamlit.io/iqbalmantam/onlinetest", file: "onlinetest · main · app.py", tags: ["Python", "Streamlit", "EdTech"], icon: "clipboard-check" }
+            { 
+                id: "1", 
+                title: "Database OS", 
+                category: "Database & Data", 
+                desc: "Sistem pengelolaan dan visualisasi database terpusat untuk mempermudah pemantauan struktur data dan eksekusi query.", 
+                url: "https://share.streamlit.io/iqbalmantam/databaseos", 
+                file: "databaseos · main · app.py", 
+                tags: ["Python", "Streamlit", "PostgreSQL"], 
+                icon: "database" 
+            },
+            { 
+                id: "2", 
+                title: "IRT Test", 
+                category: "Assessment & Test", 
+                desc: "Aplikasi yang menggabungkan dua metode psikometri modern yaitu Computerized Adaptive Testing (CAT) berbasis IRT (Item Response Theory)", 
+                url: "https://share.streamlit.io/iqbalmantam/mantam-app", 
+                file: "mantam-app · main · app.py", 
+                tags: ["Python", "Streamlit", "Automation"], 
+                icon: "cpu" 
+            },
+            { 
+                id: "3", 
+                title: "Test Kandidat Logistik", 
+                category: "Assessment & Test", 
+                desc: "Aplikasi ujian & evaluasi berbasis online yang dilengkapi fitur pengerjaan soal interaktif dan kalkulasi rekap hasil uji.", 
+                url: "https://share.streamlit.io/iqbalmantam/onlinetest", 
+                file: "onlinetest · main · app.py", 
+                tags: ["Python", "Streamlit", "EdTech"], 
+                icon: "clipboard-check" 
+            }
         ];
 
         let appsData = [];
