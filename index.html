@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iqbal Mantam — Portfolio Showcase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { darkbg: '#080C14', cardbg: '#111827' },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #080C14; color: #F3F4F6; }
+        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-card:hover { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2); }
+        .glow-effect { position: absolute; width: 350px; height: 350px; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; pointer-events: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden text-slate-200">
+
+    <div class="glow-effect top-[-100px] left-[-100px]"></div>
+    <div class="glow-effect top-[30%] right-[-100px]"></div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+                    IM
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-white leading-none">iqbalmantam</h1>
+                    <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Streamlit Application Hub
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button id="btn-add-app" onclick="openFormModal()" class="hidden px-3.5 py-2 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>+ Tambah App Baru</span>
+                </button>
+
+                <button id="btn-admin-toggle" onclick="toggleAdminMode()" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-2">
+                    <i data-lucide="lock" class="w-4 h-4" id="admin-icon"></i>
+                    <span id="admin-btn-text">Admin Mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-6 py-10">
+        <div class="text-center max-w-3xl mx-auto mb-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> App Showcase Portal
+            </div>
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
+                Ekosistem Aplikasi <br class="hidden sm:inline">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+                    Interaktif & Analytics
+                </span>
+            </h2>
+            <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+                Kumpulan aplikasi web cerdas berbasis Streamlit untuk pengelolaan database, analisis data, dan sistem evaluasi online.
+            </p>
+
+            <div id="admin-banner" class="hidden mt-4 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs inline-flex items-center gap-2">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                <span>Mode Edit Aktif! Kamu dapat menambah, mengubah, atau menghapus aplikasi.</span>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0" id="category-tabs"></div>
+
+            <div class="relative w-full md:w-72">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="search-input" oninput="renderApps()" placeholder="Cari nama atau keyword..." 
+                    class="w-full pl-10 pr-4 py-2 rounded-xl glass-card text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="apps-grid"></div>
+    </main>
+
+    <footer class="mt-16 border-t border-slate-800/80 glass-card py-6 px-6 text-center text-xs text-slate-500">
+        © 2026 Iqbal Mantam • Streamlit App Portfolio
+    </footer>
+
+    <!-- MODAL: Form Tambah / Edit App -->
+    <div id="form-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-200">
+        <div class="glass-card max-w-lg w-full rounded-2xl p-6 border border-slate-700/80 shadow-2xl relative">
+            <button onclick="closeFormModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <h3 class="font-bold text-lg text-white mb-1" id="form-modal-title">Tambah Aplikasi Baru</h3>
+            <p class="text-xs text-slate-400 mb-4">Lengkapi rincian aplikasi di bawah ini.</p>
+
+            <form id="app-form" onsubmit="saveApp(event)" class="space-y-3">
+                <input type="hidden" id="edit-app-id">
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Nama Aplikasi</label>
+                    <input type="text" id="form-title" required placeholder="Contoh: Database OS" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 block mb-1">Kategori</label>
+                        <select id="form-category" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
+                            <option value="Database & Data">Database & Data</option>
+                            <option value="Core Tools">Core Tools</option>
+                            <option value="Assessment & Test">Assessment & Test</option>
+                            <option value="Machine Learning">Machine Learning</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 block mb-1">File Repository</label>
+                        <input type="text" id="form-file" required placeholder="databaseos · main · app.py" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">URL Streamlit App</label>
+                    <input type="url" id="form-url" required placeholder="https://share.streamlit.io/iqbalmantam/..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Deskripsi Singkat</label>
+                    <textarea id="form-desc" rows="3" required placeholder="Penjelasan singkat kegunaan aplikasi..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Tech Stack (Separated by comma)</label>
+                    <input type="text" id="form-tags" placeholder="Python, Streamlit, Pandas" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="pt-3 flex gap-2">
+                    <button type="button" onclick="closeFormModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition">Simpan Aplikasi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-indigo-600 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-sm font-medium transform translate-y-20 opacity-0 transition-all duration-300">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+        <span id="toast-message">Berhasil disimpan!</span>
+    </div>
+
+    <script>
+        const defaultApps = [
+            { id: "1", title: "Database OS", category: "Database & Data", desc: "Sistem pengelolaan dan visualisasi database terpusat untuk mempermudah pemantauan struktur data dan eksekusi query.", url: "https://share.streamlit.io/iqbalmantam/databaseos", file: "databaseos · main · app.py", tags: ["Python", "Streamlit", "PostgreSQL"], icon: "database" },
+            { id: "2", title: "Mantam App", category: "Core Tools", desc: "Platform ekosistem utama yang mengintegrasikan berbagai utilitas operasional dan otomatisasi alur kerja.", url: "https://share.streamlit.io/iqbalmantam/mantam-app", file: "mantam-app · main · app.py", tags: ["Python", "Streamlit", "Automation"], icon: "cpu" },
+            { id: "3", title: "Online Test Platform", category: "Assessment & Test", desc: "Aplikasi ujian & evaluasi berbasis online yang dilengkapi fitur pengerjaan soal interaktif dan kalkulasi rekap hasil uji.", url: "https://share.streamlit.io/iqbalmantam/onlinetest", file: "onlinetest · main · app.py", tags: ["Python", "Streamlit", "EdTech"], icon: "clipboard-check" }
+        ];
+
+        let appsData = [];
+        let isAdminMode = false;
+        let currentCategory = "Semua";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const saved = localStorage.getItem("iqbal_portfolio_apps");
+            if (saved) { appsData = JSON.parse(saved); } 
+            else { appsData = defaultApps; saveToStorage(); }
+            renderCategoryTabs();
+            renderApps();
+            lucide.createIcons();
+        });
+
+        function saveToStorage() { localStorage.setItem("iqbal_portfolio_apps", JSON.stringify(appsData)); }
+
+        function toggleAdminMode() {
+            if (!isAdminMode) {
+                const pin = prompt("Masukkan PIN Admin (Default: 1234):");
+                if (pin === "1234") { isAdminMode = true; showToast("Mode Admin Aktif!"); } 
+                else if (pin !== null) { alert("PIN Salah!"); return; }
+            } else { isAdminMode = false; showToast("Kembali ke Mode Publik."); }
+            updateAdminUI();
+            renderApps();
+        }
+
+        function updateAdminUI() {
+            const btnText = document.getElementById("admin-btn-text");
+            const btnIcon = document.getElementById("admin-icon");
+            const btnAdd = document.getElementById("btn-add-app");
+            const banner = document.getElementById("admin-banner");
+
+            if (isAdminMode) {
+                btnText.innerText = "Keluar Admin";
+                btnIcon.setAttribute("data-lucide", "unlock");
+                btnAdd.classList.remove("hidden");
+                banner.classList.remove("hidden");
+            } else {
+                btnText.innerText = "Admin Mode";
+                btnIcon.setAttribute("data-lucide", "lock");
+                btnAdd.classList.add("hidden");
+                banner.classList.add("hidden");
+            }
+            lucide.createIcons();
+        }
+
+        function renderCategoryTabs() {
+            const categories = ["Semua", ...new Set(appsData.map(a => a.category))];
+            const container = document.getElementById("category-tabs");
+            container.innerHTML = categories.map(cat => `
+                <button onclick="selectCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${cat === currentCategory ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'glass-card text-slate-400 hover:text-white border border-slate-800'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function selectCategory(cat) { currentCategory = cat; renderCategoryTabs(); renderApps(); }
+
+        function renderApps() {
+            const query = document.getElementById("search-input").value.toLowerCase();
+            const container = document.getElementById("apps-grid");
+            const filtered = appsData.filter(app => {
+                const matchCat = (currentCategory === "Semua") || (app.category === currentCategory);
+                const matchQuery = app.title.toLowerCase().includes(query) || app.desc.toLowerCase().includes(query) || app.tags.some(t => t.toLowerCase().includes(query));
+                return matchCat && matchQuery;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 text-sm">Tidak ada aplikasi yang ditemukan.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(app => `
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between transition duration-300 relative group">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md">
+                                <i data-lucide="${app.icon || 'app-window'}" class="w-5 h-5"></i>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
+                        </div>
+                        <div class="text-[11px] font-mono text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded-md inline-flex items-center gap-1.5 mb-3 border border-slate-800">
+                            <i data-lucide="file-code" class="w-3.5 h-3.5 text-indigo-400"></i>
+                            <span>${app.file}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">${app.title}</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed line-clamp-3 mb-4">${app.desc}</p>
+                        <div class="flex flex-wrap gap-1.5 mb-6">
+                            ${app.tags.map(tag => `<span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] border border-slate-700/50">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800 flex items-center justify-between gap-2">
+                        <a href="${app.url}" target="_blank" class="flex-1 py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+                            <span>Buka Aplikasi</span>
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                        </a>
+                        ${isAdminMode ? `
+                            <button onclick="editApp('${app.id}')" title="Edit App" class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                            <button onclick="deleteApp('${app.id}')" title="Hapus App" class="p-2.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function openFormModal(isEdit = false) {
+            const modal = document.getElementById("form-modal");
+            document.getElementById("form-modal-title").innerText = isEdit ? "Edit Aplikasi" : "Tambah Aplikasi Baru";
+            modal.classList.remove("hidden");
+            setTimeout(() => modal.classList.remove("opacity-0"), 10);
+        }
+
+        function closeFormModal() {
+            const modal = document.getElementById("form-modal");
+            modal.classList.add("opacity-0");
+            setTimeout(() => {
+                modal.classList.add("hidden");
+                document.getElementById("app-form").reset();
+                document.getElementById("edit-app-id").value = "";
+            }, 200);
+        }
+
+        function saveApp(e) {
+            e.preventDefault();
+            const editId = document.getElementById("edit-app-id").value;
+            const appData = {
+                id: editId || Date.now().toString(),
+                title: document.getElementById("form-title").value,
+                category: document.getElementById("form-category").value,
+                file: document.getElementById("form-file").value,
+                url: document.getElementById("form-url").value,
+                desc: document.getElementById("form-desc").value,
+                tags: document.getElementById("form-tags").value.split(",").map(s => s.trim()).filter(Boolean),
+                icon: "layers"
+            };
+
+            if (editId) {
+                const index = appsData.findIndex(a => a.id === editId);
+                if (index !== -1) appsData[index] = appData;
+                showToast("Aplikasi berhasil diperbarui!");
+            } else {
+                appsData.push(appData);
+                showToast("Aplikasi baru berhasil ditambahkan!");
+            }
+
+            saveToStorage();
+            renderCategoryTabs();
+            renderApps();
+            closeFormModal();
+        }
+
+        function editApp(id) {
+            const app = appsData.find(a => a.id === id);
+            if (!app) return;
+            document.getElementById("edit-app-id").value = app.id;
+            document.getElementById("form-title").value = app.title;
+            document.getElementById("form-category").value = app.category;
+            document.getElementById("form-file").value = app.file;
+            document.getElementById("form-url").value = app.url;
+            document.getElementById("form-desc").value = app.desc;
+            document.getElementById("form-tags").value = app.tags.join(", ");
+            openFormModal(true);
+        }
+
+        function deleteApp(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus aplikasi ini?")) {
+                appsData = appsData.filter(a => a.id !== id);
+                saveToStorage();
+                renderCategoryTabs();
+                renderApps();
+                showToast("Aplikasi dihapus.");
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toast-message").innerText = msg;
+            toast.classList.remove("translate-y-20", "opacity-0");
+            setTimeout(() => toast.classList.add("translate-y-20", "opacity-0"), 3000);
+        }
+    </script>
+</body>
+</html>
