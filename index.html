@@ -130,21 +130,15 @@
                     <input type="text" id="form-title" required placeholder="Contoh: Database OS" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs font-semibold text-slate-300 block mb-1">Kategori</label>
-                        <select id="form-category" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
-                            <option value="Database & Data">Database & Data</option>
-                            <option value="Core Tools">Core Tools</option>
-                            <option value="Assessment & Test">Assessment & Test</option>
-                            <option value="Machine Learning">Machine Learning</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-slate-300 block mb-1">File Repository</label>
-                        <input type="text" id="form-file" required placeholder="databaseos · main · app.py" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
-                    </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Kategori</label>
+                    <select id="form-category" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
+                        <option value="Database & Data">Database & Data</option>
+                        <option value="Core Tools">Core Tools</option>
+                        <option value="Assessment & Test">Assessment & Test</option>
+                        <option value="Machine Learning">Machine Learning</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
                 </div>
 
                 <div>
@@ -177,8 +171,8 @@
     </div>
 
     <script>
-        // Kunci Penyimpanan v9 untuk memperbarui data aplikasi terbaru di semua browser
-        const STORAGE_KEY = "iqbal_portfolio_apps_v9";
+        // Kunci Penyimpanan v10 (Tanpa elemen 'file')
+        const STORAGE_KEY = "iqbal_portfolio_apps_v10";
 
         const defaultApps = [
             { 
@@ -187,7 +181,6 @@
                 category: "Database & Data", 
                 desc: "Sistem pengelolaan dan visualisasi database terpusat untuk mempermudah pemantauan struktur data dan eksekusi query.\n- Master Data Karyawan\n- Attendance Report\n- Manpower Cost.", 
                 url: "https://databasekaryawanos.streamlit.app/", 
-                file: "databaseos · main · app.py", 
                 tags: ["Python", "Streamlit", "PostgreSQL"], 
                 icon: "database" 
             },
@@ -197,9 +190,8 @@
                 category: "Assessment & Test", 
                 desc: "Aplikasi yang menggabungkan metode psikometri modern yaitu Computerized Adaptive Testing (CAT) berbasis IRT (Item Response Theory)", 
                 url: "https://testirt.streamlit.app/", 
-                file: "mantam-app · main · app.py", 
                 tags: ["Python", "Streamlit", "Automation"], 
-                icon: "cpu" 
+                icon: "clipboard-check" 
             },
             { 
                 id: "3", 
@@ -207,7 +199,6 @@
                 category: "Assessment & Test", 
                 desc: "Aplikasi ujian & evaluasi berbasis online yang dilengkapi fitur pengerjaan soal interaktif dan kalkulasi rekap hasil uji.", 
                 url: "https://testonlinekandidat.streamlit.app/", 
-                file: "onlinetest · main · app.py", 
                 tags: ["Python", "Streamlit", "EdTech"], 
                 icon: "clipboard-check" 
             },
@@ -217,7 +208,6 @@
                 category: "Assessment & Test", 
                 desc: "Instrumen Psikometri: Terdiri dari 75 indikator kepribadian (Big Five Personality / OCEAN), 15 skenario motivasi (Maslow's Hierarchy of Needs), dan 10 skenario ketahanan stres (Freud Defense Mechanisms).", 
                 url: "https://kepribadian.streamlit.app/", 
-                file: "kepribadian · main · app.py", 
                 tags: ["Python", "Streamlit", "PostgreSQL"], 
                 icon: "clipboard-check" 
             }
@@ -321,10 +311,6 @@
                             </div>
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
                         </div>
-                        <div class="text-[11px] font-mono text-slate-400 bg-slate-900/80 px-2.5 py-1 rounded-md inline-flex items-center gap-1.5 mb-3 border border-slate-800">
-                            <i data-lucide="file-code" class="w-3.5 h-3.5 text-indigo-400"></i>
-                            <span>${app.file}</span>
-                        </div>
                         <h3 class="text-lg font-bold text-white mb-2">${app.title}</h3>
                         <p class="text-slate-400 text-xs leading-relaxed whitespace-pre-line mb-4">${app.desc}</p>
                         <div class="flex flex-wrap gap-1.5 mb-6">
@@ -370,7 +356,6 @@
                 id: editId || Date.now().toString(),
                 title: document.getElementById("form-title").value,
                 category: document.getElementById("form-category").value,
-                file: document.getElementById("form-file").value,
                 url: document.getElementById("form-url").value,
                 desc: document.getElementById("form-desc").value,
                 tags: document.getElementById("form-tags").value.split(",").map(s => s.trim()).filter(Boolean),
@@ -398,7 +383,6 @@
             document.getElementById("edit-app-id").value = app.id;
             document.getElementById("form-title").value = app.title;
             document.getElementById("form-category").value = app.category;
-            document.getElementById("form-file").value = app.file;
             document.getElementById("form-url").value = app.url;
             document.getElementById("form-desc").value = app.desc;
             document.getElementById("form-tags").value = app.tags.join(", ");
