@@ -81,6 +81,9 @@
             <p class="text-slate-300 font-medium text-sm md:text-base leading-relaxed mb-1">
                 Created by Iqbal Mantam
             </p>
+            <p class="text-slate-400 text-xs md:text-sm leading-relaxed">
+                Kumpulan aplikasi web cerdas berbasis Streamlit untuk pengelolaan database, analisis data, dan sistem evaluasi online.
+            </p>
 
             <div id="admin-banner" class="hidden mt-4 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs inline-flex items-center gap-2">
                 <i data-lucide="shield-alert" class="w-4 h-4"></i>
@@ -174,16 +177,15 @@
     </div>
 
     <script>
-        // Kunci Penyimpanan Baru (v6) untuk memaksa pembaruan data di semua browser
-        const STORAGE_KEY = "iqbal_portfolio_apps_v6";
+        // Kunci Penyimpanan v8 untuk memicu pembaruan judul & deskripsi di semua browser
+        const STORAGE_KEY = "iqbal_portfolio_apps_v8";
 
-        // DATA DEFAULT DENGAN URL STREAMLIT LENGKAP & TERBARU
         const defaultApps = [
             { 
                 id: "1", 
-                title: "Database OS", 
+                title: "Employee Report", 
                 category: "Database & Data", 
-                desc: "Sistem pengelolaan dan visualisasi database terpusat untuk mempermudah pemantauan struktur data dan eksekusi query.", 
+                desc: "Sistem pengelolaan dan visualisasi database terpusat untuk mempermudah pemantauan struktur data dan eksekusi query.\n- Master Data Karyawan\n- Attendance Report\n- Manpower Cost.", 
                 url: "https://databasekaryawanos.streamlit.app/", 
                 file: "databaseos · main · app.py", 
                 tags: ["Python", "Streamlit", "PostgreSQL"], 
@@ -314,7 +316,7 @@
                             <span>${app.file}</span>
                         </div>
                         <h3 class="text-lg font-bold text-white mb-2">${app.title}</h3>
-                        <p class="text-slate-400 text-xs leading-relaxed line-clamp-3 mb-4">${app.desc}</p>
+                        <p class="text-slate-400 text-xs leading-relaxed whitespace-pre-line mb-4">${app.desc}</p>
                         <div class="flex flex-wrap gap-1.5 mb-6">
                             ${app.tags.map(tag => `<span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] border border-slate-700/50">${tag}</span>`).join('')}
                         </div>
