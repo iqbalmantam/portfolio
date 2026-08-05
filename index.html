@@ -142,6 +142,11 @@
                 </div>
 
                 <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Lucide Icon (Opsional)</label>
+                    <input type="text" id="form-icon" placeholder="Contoh: clipboard-check, database, cpu, brain" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div>
                     <label class="text-xs font-semibold text-slate-300 block mb-1">URL Streamlit App</label>
                     <input type="url" id="form-url" required placeholder="https://share.streamlit.io/iqbalmantam/..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
                 </div>
@@ -152,7 +157,7 @@
                 </div>
 
                 <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Tech Stack (Separated by comma)</label>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Tech Stack (Dipisahkan koma)</label>
                     <input type="text" id="form-tags" placeholder="Python, Streamlit, Pandas" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
                 </div>
 
@@ -171,7 +176,8 @@
     </div>
 
     <script>
-        const STORAGE_KEY = "iqbal_portfolio_apps_v11";
+        // Kunci Penyimpanan v12 (diperbarui agar cache otomatis ter-refresh)
+        const STORAGE_KEY = "iqbal_portfolio_apps_v12";
 
         const defaultApps = [
             { 
@@ -360,6 +366,11 @@
         function saveApp(e) {
             e.preventDefault();
             const editId = document.getElementById("edit-app-id").value;
+            const existingApp = appsData.find(a => a.id === editId);
+            
+            const customIcon = document.getElementById("form-icon").value.trim();
+            const appIcon = customIcon || (existingApp ? existingApp.icon : "layers");
+
             const appData = {
                 id: editId || Date.now().toString(),
                 title: document.getElementById("form-title").value,
@@ -367,7 +378,7 @@
                 url: document.getElementById("form-url").value,
                 desc: document.getElementById("form-desc").value,
                 tags: document.getElementById("form-tags").value.split(",").map(s => s.trim()).filter(Boolean),
-                icon: "layers"
+                icon: appIcon
             };
 
             if (editId) {
@@ -391,6 +402,7 @@
             document.getElementById("edit-app-id").value = app.id;
             document.getElementById("form-title").value = app.title;
             document.getElementById("form-category").value = app.category;
+            document.getElementById("form-icon").value = app.icon || "";
             document.getElementById("form-url").value = app.url;
             document.getElementById("form-desc").value = app.desc;
             document.getElementById("form-tags").value = app.tags.join(", ");
