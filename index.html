@@ -143,7 +143,7 @@
 
                 <div>
                     <label class="text-xs font-semibold text-slate-300 block mb-1">Lucide Icon (Opsional)</label>
-                    <input type="text" id="form-icon" placeholder="Contoh: clipboard-check, database, cpu, brain" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
+                    <input type="text" id="form-icon" placeholder="Contoh: shield-check, database, search, brain" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
                 </div>
 
                 <div>
@@ -176,8 +176,8 @@
     </div>
 
     <script>
-        // Kunci Penyimpanan v12 (diperbarui agar cache otomatis ter-refresh)
-        const STORAGE_KEY = "iqbal_portfolio_apps_v12";
+        // Kunci Penyimpanan v13 (diperbarui agar cache otomatis ter-refresh membawa app OSINT)
+        const STORAGE_KEY = "iqbal_portfolio_apps_v13";
 
         const defaultApps = [
             { 
@@ -224,6 +224,15 @@
                 url: "https://mantam-excel.streamlit.app/", 
                 tags: ["Python", "Streamlit", "PostgreSQL"], 
                 icon: "database" 
+            },
+            { 
+                id: "6", 
+                title: "Candidate OSINT Checker", 
+                category: "Assessment & Test", 
+                desc: "Platform Background Check Kandidat berbasis OSINT real-time. Memindai jejak digital, jaringan seluler Indonesia, integritas media sosial, hingga audit rekam jejak hukum (Mahkamah Agung) tanpa data dummy.", 
+                url: "https://osint-pro.streamlit.app/", 
+                tags: ["Python", "Streamlit", "OSINT", "Async"], 
+                icon: "shield-check" 
             }
         ];
 
