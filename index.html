@@ -143,7 +143,7 @@
 
                 <div>
                     <label class="text-xs font-semibold text-slate-300 block mb-1">Lucide Icon (Opsional)</label>
-                    <input type="text" id="form-icon" placeholder="Contoh: shield-check, database, search, brain" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
+                    <input type="text" id="form-icon" placeholder="Contoh: shield-check, database, search, book-open" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
                 </div>
 
                 <div>
@@ -176,8 +176,8 @@
     </div>
 
     <script>
-        // Kunci Penyimpanan v13 (diperbarui agar cache otomatis ter-refresh membawa app OSINT)
-        const STORAGE_KEY = "iqbal_portfolio_apps_v13";
+        // Kunci Penyimpanan v14 (diperbarui agar cache ter-refresh membawa app PustakaBebas)
+        const STORAGE_KEY = "iqbal_portfolio_apps_v14";
 
         const defaultApps = [
             { 
@@ -186,7 +186,6 @@
                 category: "Database & Data", 
                 desc: "Sistem pengelolaan dan visualisasi database terpusat untuk mempermudah pemantauan struktur data dan eksekusi query.\n- Master Data Karyawan\n- Attendance Report\n- Manpower Cost.", 
                 url: "https://databasekaryawanos.streamlit.app/", 
-                tags: ["Python", "Streamlit", "PostgreSQL"], 
                 icon: "database" 
             },
             { 
@@ -195,7 +194,6 @@
                 category: "Assessment & Test", 
                 desc: "Aplikasi yang menggabungkan metode psikometri modern yaitu Computerized Adaptive Testing (CAT) berbasis IRT (Item Response Theory)", 
                 url: "https://testirt.streamlit.app/", 
-                tags: ["Python", "Streamlit", "Automation"], 
                 icon: "clipboard-check" 
             },
             { 
@@ -204,7 +202,6 @@
                 category: "Assessment & Test", 
                 desc: "Aplikasi ujian & evaluasi khusus Sektor Logistik & Supply Chain berbasis online yang mengukur ketajaman logika kuantitatif, pemahaman pengolahan data teknis (Excel), serta profil karakter kerja kandidat untuk menentukan kesesuaian posisi (fitment index).", 
                 url: "https://testonlinekandidat.streamlit.app/", 
-                tags: ["Python", "Streamlit", "EdTech"], 
                 icon: "clipboard-check" 
             },
             { 
@@ -213,7 +210,6 @@
                 category: "Assessment & Test", 
                 desc: "Instrumen Psikometri: Terdiri dari 75 indikator kepribadian (Big Five Personality / OCEAN), 15 skenario motivasi (Maslow's Hierarchy of Needs), dan 10 skenario ketahanan stres (Freud Defense Mechanisms).", 
                 url: "https://kepribadian.streamlit.app/", 
-                tags: ["Python", "Streamlit", "PostgreSQL"], 
                 icon: "clipboard-check" 
             },
             { 
@@ -222,7 +218,6 @@
                 category: "Database & Data", 
                 desc: "Upload file Excel/CSV Anda di Smart AI Excel Summarizer dan biarkan AI menganalisisnya", 
                 url: "https://mantam-excel.streamlit.app/", 
-                tags: ["Python", "Streamlit", "PostgreSQL"], 
                 icon: "database" 
             },
             { 
@@ -231,8 +226,15 @@
                 category: "Assessment & Test", 
                 desc: "Platform Background Check Kandidat berbasis OSINT real-time. Memindai jejak digital, jaringan seluler Indonesia, integritas media sosial, hingga audit rekam jejak hukum (Mahkamah Agung) tanpa data dummy.", 
                 url: "https://osint-pro.streamlit.app/", 
-                tags: ["Python", "Streamlit", "OSINT", "Async"], 
                 icon: "shield-check" 
+            },
+            { 
+                id: "7", 
+                title: "Pustaka Bebas", 
+                category: "Database & Data", 
+                desc: "Platform pencarian bacaan full Novel, buku klasik, sastra publik, skripsi & tugas akhir kampus Indonesia hingga jurnal ilmiah.", 
+                url: "https://bacabuku.streamlit.app/", 
+                icon: "book-open" 
             }
         ];
 
