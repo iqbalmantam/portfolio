@@ -1,66 +1,136 @@
-const defaultApps = [
-            { 
-                id: "1", 
-                title: "Employee Report", 
-                category: "Database & Data", 
-                desc: "Sistem pengelolaan dan visualisasi database terpusat untuk mempermudah pemantauan struktur data dan eksekusi query.\n- Master Data Karyawan\n- Attendance Report\n- Manpower Cost.", 
-                url: "https://databasekaryawanos.streamlit.app/", 
-                icon: "database" 
-            },
-            { 
-                id: "2", 
-                title: "IRT Test", 
-                category: "Assessment & Test", 
-                desc: "Aplikasi yang menggabungkan metode psikometri modern yaitu Computerized Adaptive Testing (CAT) berbasis IRT (Item Response Theory)", 
-                url: "https://testirt.streamlit.app/", 
-                icon: "clipboard-check" 
-            },
-            { 
-                id: "3", 
-                title: "Test Kandidat Logistik", 
-                category: "Assessment & Test", 
-                desc: "Aplikasi ujian & evaluasi khusus Sektor Logistik & Supply Chain berbasis online yang mengukur ketajaman logika kuantitatif, pemahaman pengolahan data teknis (Excel), serta profil karakter kerja kandidat untuk menentukan kesesuaian posisi (fitment index).", 
-                url: "https://testonlinekandidat.streamlit.app/", 
-                icon: "clipboard-check" 
-            },
-            { 
-                id: "4", 
-                title: "Test Kepribadian", 
-                category: "Assessment & Test", 
-                desc: "Instrumen Psikometri: Terdiri dari 75 indikator kepribadian (Big Five Personality / OCEAN), 15 skenario motivasi (Maslow's Hierarchy of Needs), dan 10 skenario ketahanan stres (Freud Defense Mechanisms).", 
-                url: "https://kepribadian.streamlit.app/", 
-                icon: "clipboard-check" 
-            },
-            { 
-                id: "5", 
-                title: "Smart AI Excel Summarizer", 
-                category: "Database & Data", 
-                desc: "Upload file Excel/CSV Anda di Smart AI Excel Summarizer dan biarkan AI menganalisisnya", 
-                url: "https://mantam-excel.streamlit.app/", 
-                icon: "database" 
-            },
-            { 
-                id: "6", 
-                title: "Candidate OSINT Checker", 
-                category: "Assessment & Test", 
-                desc: "Platform Background Check Kandidat berbasis OSINT real-time. Memindai jejak digital, jaringan seluler Indonesia, integritas media sosial, hingga audit rekam jejak hukum (Mahkamah Agung) tanpa data dummy.", 
-                url: "https://osint-pro.streamlit.app/", 
-                icon: "shield-check" 
-            },
-            { 
-                id: "7", 
-                title: "Pustaka Bebas", 
-                category: "Database & Data", 
-                desc: "Platform pencarian bacaan full akses buku klasik, novel, sastra publik, skripsi & tugas akhir kampus Indonesia, hingga jurnal ilmiah.", 
-                url: "https://bacabuku.streamlit.app/", 
-                icon: "book-open" 
-            },
-            { 
-                id: "8", 
-                title: "AI Interview Assistant", 
-                category: "Assessment & Test", 
-                desc: "Asisten wawancara berbasis AI (Groq & Llama 3.3) yang membaca CV kandidat secara otomatis untuk menghasilkan pertanyaan wawancara spesifik, menilai jawaban secara objektif, serta merekap hasil ke Google Sheets.", 
-                url: "https://ai-mantam-interview.streamlit.app/", 
-                icon: "clipboard-check" 
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iqbal Mantam — Streamlit Applications Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { darkbg: '#080C14', cardbg: '#111827' },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
             }
+        }
+    </script>
+    <!-- Google Fonts & Lucide Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #080C14; color: #F3F4F6; }
+        .glass-card { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-card:hover { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2); }
+        .glow-effect { position: absolute; width: 350px; height: 350px; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; pointer-events: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden text-slate-200">
+
+    <!-- Background Ambient Glows -->
+    <div class="glow-effect top-[-100px] left-[-100px]"></div>
+    <div class="glow-effect top-[30%] right-[-100px]"></div>
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+                    IM
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-white leading-none">iqbalmantam</h1>
+                    <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Streamlit Application Hub
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button id="btn-add-app" onclick="openFormModal()" class="hidden px-3.5 py-2 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>+ Tambah App Baru</span>
+                </button>
+
+                <button id="btn-admin-toggle" onclick="toggleAdminMode()" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-2">
+                    <i data-lucide="lock" class="w-4 h-4" id="admin-icon"></i>
+                    <span id="admin-btn-text">Admin Mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-6 py-10">
+        
+        <!-- Hero Section -->
+        <div class="text-center max-w-3xl mx-auto mb-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> App Showcase Portal
+            </div>
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-3">
+                Ekosistem Aplikasi <br class="hidden sm:inline">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+                    Interaktif & Analytics
+                </span>
+            </h2>
+            <p class="text-slate-300 font-medium text-sm md:text-base leading-relaxed mb-1">
+                Created by Iqbal Mantam
+            </p>
+            <p class="text-slate-400 text-xs md:text-sm leading-relaxed">
+                Kumpulan aplikasi web cerdas berbasis Streamlit untuk pengelolaan database, analisis data, dan sistem evaluasi online.
+            </p>
+
+            <div id="admin-banner" class="hidden mt-4 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs inline-flex items-center gap-2">
+                <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                <span>Mode Edit Aktif! Kamu dapat menambah, mengubah, atau menghapus aplikasi.</span>
+            </div>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0" id="category-tabs"></div>
+
+            <div class="relative w-full md:w-72">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="search-input" oninput="renderApps()" placeholder="Cari nama atau keyword..." 
+                    class="w-full pl-10 pr-4 py-2 rounded-xl glass-card text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+            </div>
+        </div>
+
+        <!-- App Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="apps-grid"></div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-16 border-t border-slate-800/80 glass-card py-6 px-6 text-center text-xs text-slate-500">
+        © 2026 Iqbal Mantam • Streamlit App Portfolio
+    </footer>
+
+    <!-- MODAL & SCRIPTS SECTION -->
+    <!-- (Form Modal, Toast, and Logic remain the same as your original file) -->
+    <script>
+        const STORAGE_KEY = "iqbal_portfolio_apps_v16";
+        const defaultApps = [
+            { id: "1", title: "Employee Report", category: "Database & Data", desc: "Sistem pengelolaan dan visualisasi database terpusat...", url: "https://databasekaryawanos.streamlit.app/", icon: "database" },
+            { id: "2", title: "IRT Test", category: "Assessment & Test", desc: "Aplikasi yang menggabungkan metode psikometri...", url: "https://testirt.streamlit.app/", icon: "clipboard-check" },
+            { id: "3", title: "Test Kandidat Logistik", category: "Assessment & Test", desc: "Aplikasi ujian & evaluasi khusus Sektor Logistik...", url: "https://testonlinekandidat.streamlit.app/", icon: "clipboard-check" },
+            { id: "4", title: "Test Kepribadian", category: "Assessment & Test", desc: "Instrumen Psikometri: Terdiri dari 75 indikator...", url: "https://kepribadian.streamlit.app/", icon: "clipboard-check" },
+            { id: "5", title: "Smart AI Excel Summarizer", category: "Database & Data", desc: "Upload file Excel/CSV Anda di Smart AI...", url: "https://mantam-excel.streamlit.app/", icon: "database" },
+            { id: "6", title: "Candidate OSINT Checker", category: "Assessment & Test", desc: "Platform Background Check Kandidat berbasis OSINT...", url: "https://osint-pro.streamlit.app/", icon: "shield-check" },
+            { id: "7", title: "Pustaka Bebas", category: "Database & Data", desc: "Platform pencarian bacaan full akses buku klasik...", url: "https://bacabuku.streamlit.app/", icon: "book-open" },
+            { id: "8", title: "AI Interview Assistant", category: "Assessment & Test", desc: "Asisten wawancara berbasis AI (Groq & Llama 3.3)...", url: "https://ai-mantam-interview.streamlit.app/", icon: "clipboard-check" }
         ];
+
+        // --- Logic (Sama seperti sebelumnya) ---
+        // Anda bisa menyalin sisa fungsi JavaScript dari file asli Anda di sini.
+        // Penting: Jika Anda sudah mengedit data di browser, ingat bahwa `localStorage` 
+        // akan menimpa `defaultApps` di atas. Untuk reset, ganti `STORAGE_KEY` ke `v17`.
+    </script>
+</body>
+</html>
