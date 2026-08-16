@@ -156,11 +156,6 @@
                     <textarea id="form-desc" rows="3" required placeholder="Penjelasan singkat kegunaan aplikasi..." class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500"></textarea>
                 </div>
 
-                <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Tech Stack (Dipisahkan koma)</label>
-                    <input type="text" id="form-tags" placeholder="Python, Streamlit, Pandas" class="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500">
-                </div>
-
                 <div class="pt-3 flex gap-2">
                     <button type="button" onclick="closeFormModal()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs">Batal</button>
                     <button type="submit" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition">Simpan Aplikasi</button>
@@ -176,8 +171,8 @@
     </div>
 
     <script>
-        // Kunci Penyimpanan v14 (diperbarui agar cache ter-refresh membawa app PustakaBebas)
-        const STORAGE_KEY = "iqbal_portfolio_apps_v14";
+        // Kunci Penyimpanan v15 (tanpa elemen tags/tech stack)
+        const STORAGE_KEY = "iqbal_portfolio_apps_v15";
 
         const defaultApps = [
             { 
@@ -232,7 +227,7 @@
                 id: "7", 
                 title: "Pustaka Bebas", 
                 category: "Database & Data", 
-                desc: "Platform pencarian bacaan full Novel, buku klasik, sastra publik, skripsi & tugas akhir kampus Indonesia hingga jurnal ilmiah.", 
+                desc: "Platform pencarian bacaan full akses buku klasik, novel, sastra publik, skripsi & tugas akhir kampus Indonesia, hingga jurnal ilmiah.", 
                 url: "https://bacabuku.streamlit.app/", 
                 icon: "book-open" 
             }
@@ -318,7 +313,7 @@
             const container = document.getElementById("apps-grid");
             const filtered = appsData.filter(app => {
                 const matchCat = (currentCategory === "Semua") || (app.category === currentCategory);
-                const matchQuery = app.title.toLowerCase().includes(query) || app.desc.toLowerCase().includes(query) || app.tags.some(t => t.toLowerCase().includes(query));
+                const matchQuery = app.title.toLowerCase().includes(query) || app.desc.toLowerCase().includes(query);
                 return matchCat && matchQuery;
             });
 
@@ -337,10 +332,7 @@
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
                         </div>
                         <h3 class="text-lg font-bold text-white mb-2">${app.title}</h3>
-                        <p class="text-slate-400 text-xs leading-relaxed whitespace-pre-line mb-4">${app.desc}</p>
-                        <div class="flex flex-wrap gap-1.5 mb-6">
-                            ${app.tags.map(tag => `<span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[10px] border border-slate-700/50">${tag}</span>`).join('')}
-                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed whitespace-pre-line mb-6">${app.desc}</p>
                     </div>
                     <div class="pt-4 border-t border-slate-800 flex items-center justify-between gap-2">
                         <a href="${app.url}" target="_blank" class="flex-1 py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition">
@@ -388,7 +380,6 @@
                 category: document.getElementById("form-category").value,
                 url: document.getElementById("form-url").value,
                 desc: document.getElementById("form-desc").value,
-                tags: document.getElementById("form-tags").value.split(",").map(s => s.trim()).filter(Boolean),
                 icon: appIcon
             };
 
@@ -416,7 +407,6 @@
             document.getElementById("form-icon").value = app.icon || "";
             document.getElementById("form-url").value = app.url;
             document.getElementById("form-desc").value = app.desc;
-            document.getElementById("form-tags").value = app.tags.join(", ");
             openFormModal(true);
         }
 
