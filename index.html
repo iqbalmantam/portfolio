@@ -97,6 +97,16 @@
 
     </main>
 
+    <!-- Detail Modal -->
+    <div id="app-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md hidden transition-opacity duration-300">
+        <div class="glass-card w-full max-w-2xl rounded-2xl p-6 md:p-8 relative border border-indigo-500/30 shadow-2xl bg-slate-900/90 text-slate-200 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="mt-16 border-t border-slate-800/80 glass-card py-6 px-6 text-center text-xs text-slate-500">
         © 2026 Iqbal Mantam • Streamlit App Portfolio
@@ -104,15 +114,150 @@
 
     <script>
         const appsData = [
-            { id: "1", title: "Employee Report", category: "Database & Data", desc: "Sistem pengelolaan dan visualisasi database terpusat.", url: "https://databasekaryawanos.streamlit.app/", icon: "database" },
-            { id: "2", title: "IRT Test", category: "Assessment & Test", desc: "Aplikasi psikometri Computerized Adaptive Testing berbasis IRT.", url: "https://testirt.streamlit.app/", icon: "clipboard-check" },
-            { id: "3", title: "Test Kandidat Logistik", category: "Assessment & Test", desc: "Ujian evaluasi khusus sektor Logistik & Supply Chain.", url: "https://testonlinekandidat.streamlit.app/", icon: "clipboard-check" },
-            { id: "4", title: "Test Kepribadian", category: "Assessment & Test", desc: "Instrumen Psikometri: Big Five Personality, motivasi, dan ketahanan stres.", url: "https://kepribadian.streamlit.app/", icon: "clipboard-check" },
-            { id: "5", title: "Smart AI Excel Summarizer", category: "Database & Data", desc: "Upload Excel/CSV dan biarkan AI menganalisis datanya.", url: "https://mantam-excel.streamlit.app/", icon: "database" },
-            { id: "6", title: "Candidate OSINT Checker", category: "Assessment & Test", desc: "Platform Background Check Kandidat berbasis OSINT real-time.", url: "https://osint-pro.streamlit.app/", icon: "shield-check" },
-            { id: "7", title: "Pustaka Bebas", category: "Database & Data", desc: "Platform pencarian bacaan buku, jurnal, dan skripsi.", url: "https://bacabuku.streamlit.app/", icon: "book-open" },
-            { id: "8", title: "AI Interview Assistant", category: "Assessment & Test", desc: "Asisten wawancara berbasis AI untuk rekapitulasi ke Google Sheets.", url: "https://ai-mantam-interview.streamlit.app/", icon: "clipboard-check" },
-            { id: "9", title: "Smart CV Screener", category: "Assessment & Test", desc: "Pemilah CV berbasis LLM untuk analisis pengalaman dan skill.", url: "https://pemilah-cv.streamlit.app/", icon: "user-check" }
+            { 
+                id: "1", 
+                title: "Employee Report", 
+                category: "Database & Data", 
+                desc: "Sistem pengelolaan dan visualisasi database terpusat.", 
+                url: "https://databasekaryawanos.streamlit.app/", 
+                icon: "database",
+                kegunaan: "Pengelolaan dan visualisasi database SDM/karyawan secara terpusat untuk kebutuhan HR operasional perusahaan.",
+                kelebihan: "Antarmuka intuitif, pembaruan data real-time, minim latensi, dan navigasi data yang sangat cepat.",
+                kemampuan: [
+                    "Manajemen CRUD data karyawan lengkap dan terstruktur",
+                    "Filter & pencarian data lanjutan berdasarkan departemen/status",
+                    "Visualisasi metrik HR (turnover, demografi, masa kerja)",
+                    "Ekspor laporan data dalam berbagai format dengan mudah"
+                ]
+            },
+            { 
+                id: "2", 
+                title: "IRT Test", 
+                category: "Assessment & Test", 
+                desc: "Aplikasi psikometri Computerized Adaptive Testing berbasis IRT.", 
+                url: "https://testirt.streamlit.app/", 
+                icon: "clipboard-check",
+                kegunaan: "Evaluasi psikometri tingkat lanjut menggunakan Item Response Theory (IRT) untuk asesmen yang presisi.",
+                kelebihan: "Mengadaptasi tingkat kesulitan soal secara dinamis sesuai tingkat kemampuan peserta (Computerized Adaptive Testing).",
+                kemampuan: [
+                    "Estimasi parameter butir soal secara akurat",
+                    "Kalkulasi skor kemampuan laten (theta) peserta secara real-time",
+                    "Grafik tes adaptif interaktif dan kurva karakteristik butir (ICC)",
+                    "Laporan hasil ujian yang mendalam dan komprehensif"
+                ]
+            },
+            { 
+                id: "3", 
+                title: "Test Kandidat Logistik", 
+                category: "Assessment & Test", 
+                desc: "Ujian evaluasi khusus sektor Logistik & Supply Chain.", 
+                url: "https://testonlinekandidat.streamlit.app/", 
+                icon: "clipboard-check",
+                kegunaan: "Ujian penyaringan khusus untuk menilai kompetensi teknis kandidat di sektor Logistik & Supply Chain.",
+                kelebihan: "Soal spesifik industri yang dirancang langsung untuk menguji pemahaman operasional logistik nyata.",
+                kemampuan: [
+                    "Sistem penilaian otomatis (auto-grading) secara instan",
+                    "Manajemen sesi ujian aman, terstruktur, dan transparan",
+                    "Analisis skor performa per domain supply chain",
+                    "Pelaporan hasil ringkas untuk tim rekrutmen"
+                ]
+            },
+            { 
+                id: "4", 
+                title: "Test Kepribadian", 
+                category: "Assessment & Test", 
+                desc: "Instrumen Psikometri: Big Five Personality, motivasi, dan ketahanan stres.", 
+                url: "https://kepribadian.streamlit.app/", 
+                icon: "clipboard-check",
+                kegunaan: "Instrumen pengukuran psikometri komprehensif untuk asesmen kepribadian, motivasi, dan ketahanan kerja.",
+                kelebihan: "Analisis mendalam berbasis psikologi modern dengan visualisasi radar chart yang estetik.",
+                kemampuan: [
+                    "Pengukuran model Big Five Personality (OCEAN)",
+                    "Evaluasi motivasi kerja dan tingkat ketahanan stres",
+                    "Interpretasi profil psikologis otomatis",
+                    "Rekomendasi kecocokan peran kerja bagi kandidat"
+                ]
+            },
+            { 
+                id: "5", 
+                title: "Smart AI Excel Summarizer", 
+                category: "Database & Data", 
+                desc: "Upload Excel/CSV dan biarkan AI menganalisis datanya.", 
+                url: "https://mantam-excel.streamlit.app/", 
+                icon: "database",
+                kegunaan: "Meringkas, menganalisis, dan mengekstraksi wawasan berharga dari file Excel/CSV menggunakan AI.",
+                kelebihan: "Menghemat waktu analisis data manual berjam-jam menjadi hitungan detik lewat perintah teks.",
+                kemampuan: [
+                    "Unggah file multi-format (XLSX, CSV)",
+                    "Tanya-jawab interaktif langsung dengan data (Chat with Data)",
+                    "Pembuatan ringkasan statistik otomatis",
+                    "Ekstraksi tren dan visualisasi grafik instan"
+                ]
+            },
+            { 
+                id: "6", 
+                title: "Candidate OSINT Checker", 
+                category: "Assessment & Test", 
+                desc: "Platform Background Check Kandidat berbasis OSINT real-time.", 
+                url: "https://osint-pro.streamlit.app/", 
+                icon: "shield-check",
+                kegunaan: "Melakukan verifikasi latar belakang (*background check*) kandidat secara mendalam via Open-Source Intelligence.",
+                kelebihan: "Membantu HR mendeteksi red flags dan memvalidasi rekam jejak digital secara etis dan aman.",
+                kemampuan: [
+                    "Analisis jejak digital publik secara komprehensif",
+                    "Agregasi informasi profesional lintas platform",
+                    "Penyusunan laporan risiko keamanan kandidat",
+                    "Audit kredibilitas data pelamar kerja"
+                ]
+            },
+            { 
+                id: "7", 
+                title: "Pustaka Bebas", 
+                category: "Database & Data", 
+                desc: "Platform pencarian bacaan buku, jurnal, dan skripsi.", 
+                url: "https://bacabuku.streamlit.app/", 
+                icon: "book-open",
+                kegunaan: "Platform pencarian dan akses referensi literatur, buku, jurnal ilmiah, serta skripsi secara terstruktur.",
+                kelebihan: "Koleksi terkurasi dengan sistem pencarian kilat dan antarmuka ramah pembaca.",
+                kemampuan: [
+                    "Filter literatur berdasarkan kategori dan topik",
+                    "Pratinjau dokumen instan",
+                    "Pencarian kata kunci presisi tinggi",
+                    "Akses baca/unduh terintegrasi"
+                ]
+            },
+            { 
+                id: "8", 
+                title: "AI Interview Assistant", 
+                category: "Assessment & Test", 
+                desc: "Asisten wawancara berbasis AI untuk rekapitulasi ke Google Sheets.", 
+                url: "https://ai-mantam-interview.streamlit.app/", 
+                icon: "clipboard-check",
+                kegunaan: "Asisten virtual berbasis AI yang memandu sesi wawancara dan merekapitulasi hasilnya secara otomatis.",
+                kelebihan: "Otomatisasi transkripsi dan penilaian awal, menyederhanakan dokumentasi rekrutmen end-to-end.",
+                kemampuan: [
+                    "Simulasi pertanyaan wawancara berbasis peran spesifik",
+                    "Analisis dan evaluasi jawaban kandidat secara cerdas",
+                    "Sinkronisasi data rekapitulasi otomatis ke Google Sheets",
+                    "Penyimpanan riwayat interview terpusat"
+                ]
+            },
+            { 
+                id: "9", 
+                title: "Smart CV Screener", 
+                category: "Assessment & Test", 
+                desc: "Pemilah CV berbasis LLM untuk analisis pengalaman dan skill.", 
+                url: "https://pemilah-cv.streamlit.app/", 
+                icon: "user-check",
+                kegunaan: "Menyaring, mencocokkan, dan menilai CV kandidat secara otomatis menggunakan model LLM canggih.",
+                kelebihan: "Penilaian objektif berbasis kesesuaian keyword, pengalaman, dan skill dengan job description.",
+                kemampuan: [
+                    "Pemrosesan dokumen massal (PDF & Word)",
+                    "Perhitungan skor kecocokan (Match Score) otomatis",
+                    "Ekstraksi poin pengalaman kerja dan skill utama",
+                    "Ringkasan profil kandidat instan untuk HR"
+                ]
+            }
         ];
 
         let currentCategory = "Semua";
@@ -160,14 +305,86 @@
                         <h3 class="text-lg font-bold text-white mb-2">${app.title}</h3>
                         <p class="text-slate-400 text-xs leading-relaxed mb-6">${app.desc}</p>
                     </div>
-                    <a href="${app.url}" target="_blank" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition">
-                        <span>Buka Aplikasi</span>
-                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                    </a>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openModal('${app.id}')" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition border border-slate-700">
+                            <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-400"></i>
+                            <span>Detail</span>
+                        </button>
+                        <a href="${app.url}" target="_blank" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition shadow-lg shadow-indigo-600/20">
+                            <span>Buka App</span>
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                        </a>
+                    </div>
                 </div>
             `).join('');
             lucide.createIcons();
         }
+
+        function openModal(id) {
+            const app = appsData.find(a => a.id === id);
+            if (!app) return;
+
+            const modalContent = document.getElementById("modal-content");
+            modalContent.innerHTML = `
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg">
+                        <i data-lucide="${app.icon || 'app-window'}" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
+                        <h3 class="text-xl font-extrabold text-white mt-1">${app.title}</h3>
+                    </div>
+                </div>
+
+                <div class="space-y-4 text-sm text-slate-300 mb-8">
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                        <h4 class="font-bold text-indigo-400 flex items-center gap-2 mb-1">
+                            <i data-lucide="target" class="w-4 h-4"></i> Kegunaan Utama
+                        </h4>
+                        <p class="text-xs md:text-sm text-slate-300 leading-relaxed">${app.kegunaan}</p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                        <h4 class="font-bold text-emerald-400 flex items-center gap-2 mb-1">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> Kelebihan
+                        </h4>
+                        <p class="text-xs md:text-sm text-slate-300 leading-relaxed">${app.kelebihan}</p>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                        <h4 class="font-bold text-purple-400 flex items-center gap-2 mb-2">
+                            <i data-lucide="cpu" class="w-4 h-4"></i> Kemampuan & Fitur
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1.5 text-xs md:text-sm text-slate-300">
+                            ${app.kemampuan.map(k => `<li>${k}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="closeModal()" class="w-1/2 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition border border-slate-700">
+                        Tutup
+                    </button>
+                    <a href="${app.url}" target="_blank" class="w-1/2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-600/30">
+                        <span>Buka Aplikasi</span>
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            `;
+
+            document.getElementById("app-modal").classList.remove("hidden");
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById("app-modal").classList.add("hidden");
+        }
+
+        document.getElementById("app-modal").addEventListener("click", (e) => {
+            if (e.target.id === "app-modal") {
+                closeModal();
+            }
+        });
     </script>
 </body>
 </html>
