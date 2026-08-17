@@ -51,11 +51,19 @@
             </div>
 
             <div class="flex items-center space-x-3">
+                <!-- Tombol Tambah App (Muncul saat Admin Mode aktif) -->
                 <button id="btn-add-app" onclick="openFormModal()" class="hidden px-3.5 py-2 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-2">
                     <i data-lucide="plus-circle" class="w-4 h-4"></i>
                     <span>+ Tambah App Baru</span>
                 </button>
 
+                <!-- Tombol Request Password (Mengarah ke Trakteer) -->
+                <a href="https://trakteer.id/iqbalmantam" target="_blank" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 transition flex items-center gap-2">
+                    <i data-lucide="key" class="w-4 h-4"></i>
+                    <span>Request Password</span>
+                </a>
+
+                <!-- Tombol Admin Mode -->
                 <button id="btn-admin-toggle" onclick="toggleAdminMode()" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-2">
                     <i data-lucide="lock" class="w-4 h-4" id="admin-icon"></i>
                     <span id="admin-btn-text">Admin Mode</span>
