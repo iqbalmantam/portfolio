@@ -139,6 +139,8 @@
                 desc: "Aplikasi psikometri Computerized Adaptive Testing (CAT) berbasis Item Response Theory.", 
                 url: "https://testirt.streamlit.app/", 
                 icon: "clipboard-check",
+                status: "Production Ready",
+                techStack: ["Python", "Streamlit", "Psychometrics", "NumPy"],
                 kegunaan: "Melakukan asesmen psikologi dan pengujian kognitif tingkat lanjut dengan tingkat akurasi tinggi menggunakan model matematika modern Item Response Theory.",
                 kelebihan: "Menerapkan sistem adaptif cerdas di mana tingkat kesulitan soal berubah secara dinamis menyesuaikan kemampuan riwayat jawaban peserta tes secara real-time.",
                 kemampuan: [
@@ -155,6 +157,8 @@
                 desc: "Ujian evaluasi kompetensi teknis khusus sektor Logistik & Supply Chain.", 
                 url: "https://testonlinekandidat.streamlit.app/", 
                 icon: "clipboard-check",
+                status: "Production Ready",
+                techStack: ["Python", "Streamlit", "Assessment Engine"],
                 kegunaan: "Menyaring dan menguji kompetensi operasional kandidat yang melamar di bidang manajemen rantai pasok (supply chain), pergudangan, dan distribusi logistik.",
                 kelebihan: "Struktur soal dirancang spesifik berbasis skenario industri nyata, menghilangkan bias tes umum dan langsung menguji kapabilitas praktis kandidat.",
                 kemampuan: [
@@ -171,6 +175,8 @@
                 desc: "Instrumen Psikometri komprehensif: Big Five Personality, motivasi, & ketahanan stres.", 
                 url: "https://kepribadian.streamlit.app/", 
                 icon: "clipboard-check",
+                status: "Production Ready",
+                techStack: ["Python", "Streamlit", "Chart.js"],
                 kegunaan: "Memetakan profil psikologis, struktur kepribadian, dorongan motivasi kerja, serta tingkat resiliensi mental kandidat atau karyawan.",
                 kelebihan: "Mengombinasikan teori psikologi mapan (Big Five OCEAN) dengan visualisasi grafik radar yang modern dan mudah diinterpretasikan oleh psikolog maupun rekruter.",
                 kemampuan: [
@@ -223,6 +229,8 @@
                 desc: "Platform pencarian literatur, buku, jurnal ilmiah, dan referensi skripsi.", 
                 url: "https://bacabuku.streamlit.app/", 
                 icon: "book-open",
+                status: "Production Ready",
+                techStack: ["Python", "Streamlit", "Document DB"],
                 kegunaan: "Menyediakan portal akses literatur edukasi dan referensi akademik yang terkurasi untuk memudahkan pencarian bahan bacaan riset.",
                 kelebihan: "Memiliki indeks pencarian teks cerdas dengan kecepatan tinggi serta antarmuka bebas gangguan (*distraction-free reading*).",
                 kemampuan: [
@@ -281,6 +289,7 @@
         function renderCategoryTabs() {
             const categories = ["Semua", ...new Set(appsData.map(a => a.category))];
             const container = document.getElementById("category-tabs");
+            if (!container) return;
             container.innerHTML = categories.map(cat => `
                 <button onclick="selectCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${cat === currentCategory ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'glass-card text-slate-400 hover:text-white border border-slate-800'}">
                     ${cat}
@@ -295,8 +304,11 @@
         }
 
         function renderApps() {
-            const query = document.getElementById("search-input").value.toLowerCase();
+            const searchInput = document.getElementById("search-input");
+            const query = searchInput ? searchInput.value.toLowerCase() : "";
             const container = document.getElementById("apps-grid");
+            if (!container) return;
+
             const filtered = appsData.filter(app => {
                 const matchCat = (currentCategory === "Semua") || (app.category === currentCategory);
                 const matchQuery = app.title.toLowerCase().includes(query) || app.desc.toLowerCase().includes(query);
@@ -317,7 +329,7 @@
                         
                         <!-- Tech Stack Badges -->
                         <div class="flex flex-wrap gap-1.5 mb-6">
-                            ${app.techStack.map(t => `<span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-800/80 text-slate-300 border border-slate-700/50">${t}</span>`).join('')}
+                            ${(app.techStack || []).map(t => `<span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-800/80 text-slate-300 border border-slate-700/50">${t}</span>`).join('')}
                         </div>
                     </div>
                     
@@ -359,7 +371,7 @@
 
                 <div class="mb-6 flex flex-wrap gap-1.5">
                     <span class="text-xs font-semibold text-slate-400 mr-2 flex items-center">Tech Stack:</span>
-                    ${app.techStack.map(t => `<span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-indigo-300 border border-slate-700">${t}</span>`).join('')}
+                    ${(app.techStack || []).map(t => `<span class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-indigo-300 border border-slate-700">${t}</span>`).join('')}
                 </div>
 
                 <div class="space-y-4 text-sm text-slate-300 mb-8">
@@ -382,7 +394,7 @@
                             <i data-lucide="cpu" class="w-4 h-4"></i> Kemampuan & Fitur Teknis
                         </h4>
                         <ul class="list-disc list-inside space-y-2 text-xs md:text-sm text-slate-300">
-                            ${app.kemampuan.map(k => `<li>${k}</li>`).join('')}
+                            ${(app.kemampuan || []).map(k => `<li>${k}</li>`).join('')}
                         </ul>
                     </div>
                 </div>
@@ -406,11 +418,14 @@
             document.getElementById("app-modal").classList.add("hidden");
         }
 
-        document.getElementById("app-modal").addEventListener("click", (e) => {
-            if (e.target.id === "app-modal") {
-                closeModal();
-            }
-        });
+        const modalEl = document.getElementById("app-modal");
+        if (modalEl) {
+            modalEl.addEventListener("click", (e) => {
+                if (e.target.id === "app-modal") {
+                    closeModal();
+                }
+            });
+        }
     </script>
 </body>
 </html>
