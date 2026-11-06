@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iqbal Mantam — Applications Hub</title>
+    <meta name="description" content="Portfolio Iqbal Mantam: 15 aplikasi untuk asesmen psikometri, rekrutmen, analisis data, bisnis, dan tools kreatif.">
+    <meta name="theme-color" content="#080C14">
+    <meta name="color-scheme" content="dark">
+    <link rel="canonical" href="https://iqbalmantam.github.io/portfolio/">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232563eb'/%3E%3Cstop offset='.5' stop-color='%234f46e5'/%3E%3Cstop offset='1' stop-color='%239333ea'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-weight='700' font-size='28' text-anchor='middle' fill='white'%3EIM%3C/text%3E%3C/svg%3E">
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:title" content="Iqbal Mantam — Applications Hub">
+    <meta property="og:description" content="Portfolio Iqbal Mantam: 15 aplikasi untuk asesmen psikometri, rekrutmen, analisis data, bisnis, dan tools kreatif.">
+    <meta property="og:url" content="https://iqbalmantam.github.io/portfolio/">
+    <meta property="og:image" content="https://iqbalmantam.github.io/portfolio/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Iqbal Mantam — Applications Hub">
+    <meta name="twitter:description" content="Portfolio Iqbal Mantam: 15 aplikasi untuk asesmen psikometri, rekrutmen, analisis data, bisnis, dan tools kreatif.">
+    <meta name="twitter:image" content="https://iqbalmantam.github.io/portfolio/og-image.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -21,11 +39,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@0.525.0"></script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #080C14; color: #F3F4F6; }
         .glass-card { background: rgba(17, 24, 39, 0.75); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .glass-card:hover { border-color: rgba(99, 102, 241, 0.45); box-shadow: 0 15px 35px -10px rgba(79, 70, 229, 0.25); }
+        .app-card { transition: border-color .3s ease, box-shadow .3s ease, transform .3s ease; }
+        .app-card:hover { border-color: rgba(99, 102, 241, 0.45); box-shadow: 0 15px 35px -10px rgba(79, 70, 229, 0.25); transform: translateY(-2px); }
+        :focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
         .glow-effect { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; pointer-events: none; }
     </style>
 </head>
@@ -50,7 +71,7 @@
                 </div>
             </div>
 
-            <a href="https://wa.me/6289623291732?text=Halo%20Iqbal%2C%20saya%20tertarik%20dengan%20aplikasi%20Anda." target="_blank" rel="noopener" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-2">
+            <a href="https://wa.me/6289623291732?text=Halo%20Iqbal%2C%20saya%20tertarik%20dengan%20aplikasi%20Anda." target="_blank" rel="noopener noreferrer" aria-label="Hubungi Iqbal lewat WhatsApp" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-2">
                 <i data-lucide="message-circle" class="w-4 h-4"></i>
                 <span>Contact me</span>
             </a>
@@ -81,24 +102,47 @@
 
         <!-- Filter & Search Controls -->
         <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0" id="category-tabs"></div>
+            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0" id="category-tabs" role="group" aria-label="Filter kategori"></div>
 
             <div class="relative w-full md:w-72">
                 <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="search-input" oninput="renderApps()" placeholder="Cari nama atau keyword..." 
+                <label for="search-input" class="sr-only">Cari aplikasi</label>
+                <input type="search" id="search-input" autocomplete="off" oninput="renderApps()" placeholder="Cari nama atau keyword..." 
                     class="w-full pl-10 pr-4 py-2 rounded-xl glass-card text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
             </div>
         </div>
 
+        <p id="result-count" class="text-xs text-slate-500 mb-4" role="status" aria-live="polite"></p>
+
         <!-- App Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="apps-grid"></div>
+        <noscript>
+            <p class="text-slate-400 text-sm mb-3">Aktifkan JavaScript untuk tampilan lengkap. Daftar aplikasi:</p>
+            <ul class="list-disc list-inside space-y-1 text-sm">
+                <li><a class="text-indigo-300 underline" href="https://iqbalmantam.github.io/Mantam-product/" rel="noopener noreferrer">Aplikasi Bisnis</a></li>
+                <li><a class="text-indigo-300 underline" href="https://testirt.streamlit.app/" rel="noopener noreferrer">IRT Test</a></li>
+                <li><a class="text-indigo-300 underline" href="https://testonlinekandidat.streamlit.app/" rel="noopener noreferrer">Test Kandidat Logistik</a></li>
+                <li><a class="text-indigo-300 underline" href="https://kepribadian.streamlit.app/" rel="noopener noreferrer">Test Kepribadian</a></li>
+                <li><a class="text-indigo-300 underline" href="https://mantam-excel.streamlit.app/" rel="noopener noreferrer">Smart AI Excel Summarizer</a></li>
+                <li><a class="text-indigo-300 underline" href="https://pemilah-cv.streamlit.app/" rel="noopener noreferrer">Smart CV Screener</a></li>
+                <li><a class="text-indigo-300 underline" href="https://ai-mantam-interview.streamlit.app/" rel="noopener noreferrer">AI Interview Assistant</a></li>
+                <li><a class="text-indigo-300 underline" href="https://iqbalmantam.github.io/3D-Studio/" rel="noopener noreferrer">Denah 3D Studio</a></li>
+                <li><a class="text-indigo-300 underline" href="https://bacabuku.streamlit.app/" rel="noopener noreferrer">Baca Buku</a></li>
+                <li><a class="text-indigo-300 underline" href="https://mantam-searchrepo.streamlit.app/" rel="noopener noreferrer">Repo Search</a></li>
+                <li><a class="text-indigo-300 underline" href="https://iqbalmantam.github.io/Studio-Editor/" rel="noopener noreferrer">Studio Editor</a></li>
+                <li><a class="text-indigo-300 underline" href="https://berita-terkini.streamlit.app/" rel="noopener noreferrer">Berita Terkini</a></li>
+                <li><a class="text-indigo-300 underline" href="https://logistics-news.streamlit.app/" rel="noopener noreferrer">Logistics News</a></li>
+                <li><a class="text-indigo-300 underline" href="https://devils-mantam.streamlit.app/" rel="noopener noreferrer">Devil&#39;s Advocate</a></li>
+                <li><a class="text-indigo-300 underline" href="https://iqbalmantam.github.io/remi/" rel="noopener noreferrer">Kartu Remi</a></li>
+            </ul>
+        </noscript>
 
     </main>
 
     <!-- Detail Modal -->
     <div id="app-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md hidden transition-opacity duration-300">
-        <div class="glass-card w-full max-w-2xl rounded-2xl p-6 md:p-8 relative border border-indigo-500/30 shadow-2xl bg-slate-900/95 text-slate-200 max-h-[90vh] overflow-y-auto">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition">
+        <div class="glass-card w-full max-w-2xl rounded-2xl p-6 md:p-8 relative border border-indigo-500/30 shadow-2xl bg-slate-900/95 text-slate-200 max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <button type="button" onclick="closeModal()" aria-label="Tutup detail" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             <div id="modal-content"></div>
@@ -380,11 +424,19 @@
         ];
 
         let currentCategory = "Semua";
+        let lastFocus = null;
 
         document.addEventListener("DOMContentLoaded", () => {
             renderCategoryTabs();
             renderApps();
             lucide.createIcons();
+            const tabs = document.getElementById("category-tabs");
+            if (tabs) {
+                tabs.addEventListener("click", (e) => {
+                    const b = e.target.closest("button[data-cat]");
+                    if (b) selectCategory(b.dataset.cat);
+                });
+            }
         });
 
         function renderCategoryTabs() {
@@ -392,7 +444,7 @@
             const container = document.getElementById("category-tabs");
             if (!container) return;
             container.innerHTML = categories.map(cat => `
-                <button onclick="selectCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${cat === currentCategory ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'glass-card text-slate-400 hover:text-white border border-slate-800'}">
+                <button type="button" data-cat="${cat}" aria-pressed="${cat === currentCategory}" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${cat === currentCategory ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'glass-card text-slate-400 hover:text-white border border-slate-800'}">
                     ${cat}
                 </button>
             `).join('');
@@ -406,18 +458,26 @@
 
         function renderApps() {
             const searchInput = document.getElementById("search-input");
-            const query = searchInput ? searchInput.value.toLowerCase() : "";
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
             const container = document.getElementById("apps-grid");
             if (!container) return;
 
             const filtered = appsData.filter(app => {
                 const matchCat = (currentCategory === "Semua") || (app.category === currentCategory);
-                const matchQuery = app.title.toLowerCase().includes(query) || app.desc.toLowerCase().includes(query);
+                const haystack = [app.title, app.desc, app.category, ...(app.techStack || [])].join(" ").toLowerCase();
+                const matchQuery = haystack.includes(query);
                 return matchCat && matchQuery;
             });
 
+            const counter = document.getElementById("result-count");
+            if (counter) counter.textContent = filtered.length + " dari " + appsData.length + " aplikasi";
+            if (!filtered.length) {
+                container.innerHTML = '<div class="col-span-full text-center py-16 text-slate-400 text-sm">Tidak ada aplikasi yang cocok dengan pencarian Anda.</div>';
+                return;
+            }
+
             container.innerHTML = filtered.map(app => `
-                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between transition duration-300">
+                <div class="app-card glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div>
                         <div class="flex items-start justify-between mb-4">
                             <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md">
@@ -435,11 +495,11 @@
                     </div>
                     
                     <div class="flex items-center gap-2">
-                        <button onclick="openModal('${app.id}')" class="flex-1 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition border border-slate-700">
+                        <button type="button" onclick="openModal('${app.id}')" aria-label="Lihat detail ${app.title}" class="flex-1 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition border border-slate-700">
                             <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-400"></i>
                             <span>Detail</span>
                         </button>
-                        <a href="${app.url}" target="_blank" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition shadow-lg shadow-indigo-600/20">
+                        <a href="${app.url}" target="_blank" rel="noopener noreferrer" aria-label="Buka ${app.title} di tab baru" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition shadow-lg shadow-indigo-600/20">
                             <span>Buka App</span>
                             <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                         </a>
@@ -465,7 +525,7 @@
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${app.status || 'Active'}</span>
                             </div>
-                            <h3 class="text-xl font-extrabold text-white">${app.title}</h3>
+                            <h3 id="modal-title" class="text-xl font-extrabold text-white">${app.title}</h3>
                         </div>
                     </div>
                 </div>
@@ -501,22 +561,29 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button onclick="closeModal()" class="w-1/2 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition border border-slate-700">
+                    <button type="button" onclick="closeModal()" class="w-1/2 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition border border-slate-700">
                         Tutup
                     </button>
-                    <a href="${app.url}" target="_blank" class="w-1/2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-600/30">
+                    <a href="${app.url}" target="_blank" rel="noopener noreferrer" aria-label="Buka ${app.title} di tab baru" class="w-1/2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-600/30">
                         <span>Buka Aplikasi</span>
                         <i data-lucide="external-link" class="w-4 h-4"></i>
                     </a>
                 </div>
             `;
 
+            lastFocus = document.activeElement;
             document.getElementById("app-modal").classList.remove("hidden");
+            document.body.classList.add("overflow-hidden");
             lucide.createIcons();
+            const closeBtn = document.querySelector('#app-modal [aria-label="Tutup detail"]');
+            if (closeBtn) closeBtn.focus();
         }
 
         function closeModal() {
             document.getElementById("app-modal").classList.add("hidden");
+            document.body.classList.remove("overflow-hidden");
+            if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+            lastFocus = null;
         }
 
         const modalEl = document.getElementById("app-modal");
@@ -527,6 +594,20 @@
                 }
             });
         }
+
+        // Keyboard: Esc menutup modal, Tab berputar di dalam modal
+        document.addEventListener("keydown", (e) => {
+            const m = document.getElementById("app-modal");
+            if (!m || m.classList.contains("hidden")) return;
+            if (e.key === "Escape") { closeModal(); return; }
+            if (e.key === "Tab") {
+                const f = [...m.querySelectorAll("a[href], button:not([disabled])")];
+                if (!f.length) return;
+                const first = f[0], last = f[f.length - 1];
+                if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+            }
+        });
     </script>
 </body>
 </html>
