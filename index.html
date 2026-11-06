@@ -116,6 +116,24 @@
         const appsData = [
             { 
                 id: "1", 
+                title: "Aplikasi Bisnis", 
+                category: "Bisnis & Kreatif", 
+                desc: "Mantam Suite: aplikasi desktop HR, Finance & Accounting, Sales & Marketing, dan Media Sosial dengan demo di browser.", 
+                url: "https://iqbalmantam.github.io/Mantam-product/", 
+                icon: "briefcase",
+                status: "Demo Tersedia",
+                techStack: ["Windows Desktop", "HRMS", "Accounting", "CRM"],
+                kegunaan: "Mengelola operasional bisnis dalam satu paket aplikasi: kepegawaian dan payroll, pembukuan, penjualan, hingga perencanaan konten media sosial.",
+                kelebihan: "Dijual per modul atau paket lengkap dengan sekali bayar tanpa langganan, dan data tersimpan di komputer pengguna sendiri.",
+                kemampuan: [
+                    "HR: data karyawan, absensi, cuti, payroll dengan PPh 21 dan BPJS, rekrutmen, KPI, dan 9-Box",
+                    "Finance & Accounting: jurnal otomatis, buku besar, laba rugi, neraca, arus kas, aset tetap, dan rekap PPN",
+                    "Sales & Marketing: CRM pelanggan, lead scoring, pipeline penjualan, komisi, dan analisis funnel",
+                    "Media Sosial: kalender konten, analitik engagement, saran waktu posting, serta generator ide dan hashtag"
+                ]
+            },
+            { 
+                id: "2", 
                 title: "IRT Test", 
                 category: "Assessment & Test", 
                 desc: "Aplikasi psikometri Computerized Adaptive Testing (CAT) berbasis Item Response Theory.", 
@@ -133,7 +151,7 @@
                 ]
             },
             { 
-                id: "2", 
+                id: "3", 
                 title: "Test Kandidat Logistik", 
                 category: "Assessment & Test", 
                 desc: "Ujian evaluasi kompetensi teknis khusus sektor Logistik & Supply Chain.", 
@@ -151,7 +169,7 @@
                 ]
             },
             { 
-                id: "3", 
+                id: "4", 
                 title: "Test Kepribadian", 
                 category: "Assessment & Test", 
                 desc: "Instrumen Psikometri komprehensif: Big Five Personality, motivasi, & ketahanan stres.", 
@@ -169,7 +187,7 @@
                 ]
             },
             { 
-                id: "4", 
+                id: "5", 
                 title: "Smart AI Excel Summarizer", 
                 category: "Database & Data", 
                 desc: "Unggah file Excel/CSV dan lakukan analisis interaktif langsung bersama AI.", 
@@ -187,39 +205,21 @@
                 ]
             },
             { 
-                id: "5", 
-                title: "Candidate OSINT Checker", 
-                category: "Assessment & Test", 
-                desc: "Platform verifikasi latar belakang (background check) kandidat berbasis OSINT.", 
-                url: "https://osint-pro.streamlit.app/", 
-                icon: "shield-check",
-                status: "Advanced Security",
-                techStack: ["Python", "Streamlit", "OSINT APIs"],
-                kegunaan: "Membantu tim HR melakukan audit kredibilitas dan verifikasi rekam jejak digital publik calon karyawan secara komprehensif dan sistematis.",
-                kelebihan: "Mengotomatisasi proses penelusuran informasi publik secara etis, mempercepat investigasi latar belakang tanpa mengabaikan aspek kepatuhan privasi.",
-                kemampuan: [
-                    "Agregasi data jejak digital profesional dari berbagai sumber terbuka",
-                    "Deteksi dini potensi risiko (red flags) rekam jejak pelamar",
-                    "Penyusunan lembar audit verifikasi yang terstruktur rapi",
-                    "Validasi konsistensi riwayat karir kandidat dengan portofolio publik"
-                ]
-            },
-            { 
                 id: "6", 
-                title: "Pustaka Bebas", 
-                category: "Database & Data", 
-                desc: "Platform pencarian literatur, buku, jurnal ilmiah, dan referensi skripsi.", 
-                url: "https://bacabuku.streamlit.app/", 
-                icon: "book-open",
-                status: "Production Ready",
-                techStack: ["Python", "Streamlit", "Document DB"],
-                kegunaan: "Menyediakan portal akses literatur edukasi dan referensi akademik yang terkurasi untuk memudahkan pencarian bahan bacaan riset.",
-                kelebihan: "Memiliki indeks pencarian teks cerdas dengan kecepatan tinggi serta antarmuka bebas gangguan (distraction-free reading).",
+                title: "Smart CV Screener", 
+                category: "Assessment & Test", 
+                desc: "Pemilah CV berbasis kecerdasan buatan untuk analisis skill dan kecocokan posisi.", 
+                url: "https://pemilah-cv.streamlit.app/", 
+                icon: "user-check",
+                status: "AI-Powered",
+                techStack: ["Python", "Streamlit", "LLM Parser", "PDF Extraction"],
+                kegunaan: "Menyaring ratusan dokumen CV pelamar kerja secara kilat dan memberikan penilaian obyektif berdasarkan kesesuaian kualifikasi dengan deskripsi pekerjaan.",
+                kelebihan: "Menghemat waktu screening awal HR hingga 90%, memastikan kandidat berkualitas tinggi tidak terlewatkan akibat tumpukan dokumen.",
                 kemampuan: [
-                    "Sistem filter literatur berdasarkan kategori keilmuan dan tahun terbit",
-                    "Pencarian kata kunci presisi tinggi di dalam database dokumen",
-                    "Pratinjau dokumen dan materi referensi secara instan",
-                    "Akses unduh dan baca terintegrasi dalam satu platform web"
+                    "Ekstraksi teks cerdas dari berbagai format dokumen (PDF, DOCX)",
+                    "Perhitungan skor kecocokan (Match Score) otomatis berdasarkan kriteria pekerjaan",
+                    "Analisis mendalam terhadap rekam jejak pengalaman kerja dan keahlian teknis",
+                    "Penyediaan ringkasan profil kandidat prioritas bagi tim rekrutmen"
                 ]
             },
             { 
@@ -242,24 +242,109 @@
             },
             { 
                 id: "8", 
-                title: "Smart CV Screener", 
-                category: "Assessment & Test", 
-                desc: "Pemilah CV berbasis kecerdasan buatan untuk analisis skill dan kecocokan posisi.", 
-                url: "https://pemilah-cv.streamlit.app/", 
-                icon: "user-check",
-                status: "AI-Powered",
-                techStack: ["Python", "Streamlit", "LLM Parser", "PDF Extraction"],
-                kegunaan: "Menyaring ratusan dokumen CV pelamar kerja secara kilat dan memberikan penilaian obyektif berdasarkan kesesuaian kualifikasi dengan deskripsi pekerjaan.",
-                kelebihan: "Menghemat waktu screening awal HR hingga 90%, memastikan kandidat berkualitas tinggi tidak terlewatkan akibat tumpukan dokumen.",
+                title: "Denah 3D Studio", 
+                category: "Bisnis & Kreatif", 
+                desc: "Editor denah 3D di browser untuk kantor, rumah, toko, dan gudang.", 
+                url: "https://iqbalmantam.github.io/3D-Studio/", 
+                icon: "box",
+                status: "Production Ready",
+                techStack: ["Browser-based", "3D Model (.glb)", "Export PNG/GLB/CSV"],
+                kegunaan: "Membuat dan menata denah ruang secara akurat, lalu melihat hasilnya dalam tampilan 3D tanpa perlu menginstal software desain.",
+                kelebihan: "Bisa memulai dari nol, dari gambar denah yang diunggah, atau dari template, dan perubahan tersimpan otomatis di browser.",
                 kemampuan: [
-                    "Ekstraksi teks cerdas dari berbagai format dokumen (PDF, DOCX)",
-                    "Perhitungan skor kecocokan (Match Score) otomatis berdasarkan kriteria pekerjaan",
-                    "Analisis mendalam terhadap rekam jejak pengalaman kerja dan keahlian teknis",
-                    "Penyediaan ringkasan profil kandidat prioritas bagi tim rekrutmen"
+                    "Alat gambar 2D: dinding, ruangan, pintu, jendela, teks, kalibrasi skala, dan pengukuran dengan snap ke grid",
+                    "Unggah denah referensi dan deteksi dinding otomatis dari gambar",
+                    "Impor furnitur dan model 3D berformat .glb",
+                    "Tampilan 3D dengan pilihan pencahayaan (siang, sore, malam, studio) dan ekspor ke PNG, GLB, CSV, atau cetak 2D"
                 ]
             },
             { 
                 id: "9", 
+                title: "Baca Buku", 
+                category: "Database & Data", 
+                desc: "Platform pencarian literatur, buku, jurnal ilmiah, dan referensi skripsi.", 
+                url: "https://bacabuku.streamlit.app/", 
+                icon: "book-open",
+                status: "Production Ready",
+                techStack: ["Python", "Streamlit", "Document DB"],
+                kegunaan: "Menyediakan portal akses literatur edukasi dan referensi akademik yang terkurasi untuk memudahkan pencarian bahan bacaan riset.",
+                kelebihan: "Memiliki indeks pencarian teks cerdas dengan kecepatan tinggi serta antarmuka bebas gangguan (distraction-free reading).",
+                kemampuan: [
+                    "Sistem filter literatur berdasarkan kategori keilmuan dan tahun terbit",
+                    "Pencarian kata kunci presisi tinggi di dalam database dokumen",
+                    "Pratinjau dokumen dan materi referensi secara instan",
+                    "Akses unduh dan baca terintegrasi dalam satu platform web"
+                ]
+            },
+            { 
+                id: "10", 
+                title: "Repo Search", 
+                category: "Database & Data", 
+                desc: "Mesin pencari repositori GitHub open-source berbasis Python dan HTML.", 
+                url: "https://mantam-searchrepo.streamlit.app/", 
+                icon: "search-code",
+                status: "Production Ready",
+                techStack: ["Python", "Streamlit", "GitHub Search"],
+                kegunaan: "Membantu menemukan proyek open-source yang relevan di GitHub sebagai referensi atau titik awal pengembangan aplikasi.",
+                kelebihan: "Pencarian terpusat dalam satu antarmuka sederhana, sehingga tidak perlu menyaring hasil GitHub secara manual.",
+                kemampuan: [
+                    "Pencarian repositori open-source berdasarkan kata kunci",
+                    "Fokus pada proyek Python dan HTML",
+                    "Antarmuka web ringan yang bisa diakses tanpa instalasi"
+                ]
+            },
+            { 
+                id: "11", 
+                title: "Studio Editor", 
+                category: "Bisnis & Kreatif", 
+                desc: "Editor video langsung dari browser untuk konten Reels, TikTok, dan YouTube.", 
+                url: "https://iqbalmantam.github.io/Studio-Editor/", 
+                icon: "clapperboard",
+                status: "Production Ready",
+                techStack: ["Browser-based", "MP4/WebM Export", "Speech Recognition"],
+                kegunaan: "Mengedit video pendek untuk media sosial dengan cepat tanpa menginstal software apa pun.",
+                kelebihan: "Video diproses di perangkat pengguna dan tidak diunggah ke server, sehingga rekaman tetap privat.",
+                kemampuan: [
+                    "Potong, pisah, duplikat, dan hapus klip, serta atur kecepatan, volume, dan freeze frame",
+                    "Pisahkan audio, tambah musik dan voice-over, lalu ekspor audio sebagai WAV",
+                    "Teks, stiker, dan auto-caption dengan ekspor .srt",
+                    "Filter, koreksi warna, transisi, picture-in-picture, dan preset ekspor Reels/TikTok, YouTube, dan Instagram"
+                ]
+            },
+            { 
+                id: "12", 
+                title: "Berita Terkini", 
+                category: "Database & Data", 
+                desc: "Portal pembaca berita terkini dalam satu tampilan Streamlit.", 
+                url: "https://berita-terkini.streamlit.app/", 
+                icon: "newspaper",
+                status: "Production Ready",
+                techStack: ["Python", "Streamlit", "News Feed"],
+                kegunaan: "Memantau berita terbaru dalam satu halaman tanpa berpindah dari satu situs ke situs lain.",
+                kelebihan: "Tampilan ringkas dan ringan yang cocok untuk membaca cepat.",
+                kemampuan: [
+                    "Menampilkan berita terbaru secara terpusat",
+                    "Antarmuka web responsif yang dapat dibuka dari perangkat apa pun"
+                ]
+            },
+            { 
+                id: "13", 
+                title: "Logistics News", 
+                category: "Database & Data", 
+                desc: "Pemantau berita industri logistik dan supply chain.", 
+                url: "https://logistics-news.streamlit.app/", 
+                icon: "truck",
+                status: "Production Ready",
+                techStack: ["Python", "Streamlit", "News Feed"],
+                kegunaan: "Mengikuti perkembangan terbaru dunia logistik, pergudangan, dan rantai pasok dalam satu tempat.",
+                kelebihan: "Konten difokuskan pada industri logistik sehingga lebih relevan bagi praktisi supply chain.",
+                kemampuan: [
+                    "Menampilkan berita logistik dan supply chain terbaru",
+                    "Antarmuka web ringan tanpa instalasi"
+                ]
+            },
+            { 
+                id: "14", 
                 title: "Devil's Advocate", 
                 category: "Assessment & Test", 
                 desc: "Aplikasi strategy stress-tester berbasis AI untuk analisis pre-mortem dan pengujian ketahanan ide bisnis.", 
@@ -274,6 +359,24 @@
                     "Analisis bedah asumsi lemah (assumption destroyer) yang sering diabaikan pembuat ide",
                     "Deteksi titik buta strategis (blind spots & red flags) dan risiko operasional tersembunyi",
                     "Penyusunan rekomendasi mitigasi dan strategi tandingan (counter-attack strategy) secara terstruktur"
+                ]
+            },
+            { 
+                id: "15", 
+                title: "Kartu Remi", 
+                category: "Bisnis & Kreatif", 
+                desc: "Game kartu Remi berbasis web dengan wajah sendiri sebagai gambar kartu.", 
+                url: "https://iqbalmantam.github.io/remi/", 
+                icon: "spade",
+                status: "Production Ready",
+                techStack: ["Browser-based", "GitHub Integration", "Game Online"],
+                kegunaan: "Bermain Remi secara personal, sendirian melawan bot atau bersama teman secara online, dengan foto pemain sebagai tampilan kartu.",
+                kelebihan: "Personalisasi lewat foto sendiri membuat permainan terasa lebih seru, dan tersedia ruang permainan online untuk bermain bersama.",
+                kemampuan: [
+                    "Pilih karakter atau pakai foto sendiri sebagai gambar kartu",
+                    "Main melawan bot atau buat dan gabung ke ruang permainan online",
+                    "Skor dan pilihan taruhan (Fold, Check, Raise, All-in) di setiap ronde",
+                    "Panel admin untuk mengelola foto pemain di repo GitHub"
                 ]
             }
         ];
