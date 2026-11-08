@@ -47,10 +47,16 @@
         .app-card:hover { border-color: rgba(99, 102, 241, 0.45); box-shadow: 0 15px 35px -10px rgba(79, 70, 229, 0.25); transform: translateY(-2px); }
         :focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; }
         @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+        html { color-scheme: dark; scroll-behavior: smooth; }
+        button, a[href] { cursor: pointer; }
+        h1, h2, h3 { text-wrap: balance; }
+        #search-input:focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; border-color: #818cf8; }
         .glow-effect { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; pointer-events: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative overflow-x-hidden text-slate-200">
+
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-indigo-600 focus:text-white focus:text-sm focus:font-semibold">Lewati ke konten</a>
 
     <!-- Background Ambient Glows -->
     <div class="glow-effect top-[-100px] left-[-100px]"></div>
@@ -64,14 +70,14 @@
                     IM
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg text-white leading-none">iqbalmantam</h1>
+                    <div class="font-bold text-lg text-white leading-none">iqbalmantam</div>
                     <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Applications Hub
                     </p>
                 </div>
             </div>
 
-            <a href="https://wa.me/6289623291732?text=Halo%20Iqbal%2C%20saya%20tertarik%20dengan%20aplikasi%20Anda." target="_blank" rel="noopener noreferrer" aria-label="Hubungi Iqbal lewat WhatsApp" class="px-3.5 py-2 text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-2">
+            <a href="https://wa.me/6289623291732?text=Halo%20Iqbal%2C%20saya%20tertarik%20dengan%20aplikasi%20Anda." target="_blank" rel="noopener noreferrer" aria-label="Hubungi Iqbal lewat WhatsApp" class="px-4 min-h-[44px] text-xs font-semibold rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-2">
                 <i data-lucide="message-circle" class="w-4 h-4"></i>
                 <span>Contact me</span>
             </a>
@@ -79,40 +85,40 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-6 py-10">
+    <main id="main" class="flex-grow max-w-7xl w-full mx-auto px-6 py-10">
         
         <!-- Hero Section -->
         <div class="text-center max-w-3xl mx-auto mb-10">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
                 <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Production-Grade Web Application Portfolio
             </div>
-            <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-3">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-3">
                 Ekosistem Aplikasi <br class="hidden sm:inline">
                 <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
                     AI, Analytics & Psychometrics
                 </span>
-            </h2>
+            </h1>
             <p class="text-slate-300 font-medium text-sm md:text-base leading-relaxed mb-1">
                 Curated & Developed by Iqbal Mantam
             </p>
-            <p class="text-slate-400 text-xs md:text-sm leading-relaxed">
+            <p class="text-slate-400 text-sm md:text-base leading-relaxed">
                 Koleksi aplikasi web interaktif yang dirancang untuk bisnis, otomasi HR, asesmen psikometri, analisis data, dan tools kreatif.
             </p>
         </div>
 
         <!-- Filter & Search Controls -->
         <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0" id="category-tabs" role="group" aria-label="Filter kategori"></div>
+            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto px-1 pt-1 pb-2 md:pb-1" id="category-tabs" role="group" aria-label="Filter kategori"></div>
 
             <div class="relative w-full md:w-72">
                 <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 <label for="search-input" class="sr-only">Cari aplikasi</label>
                 <input type="search" id="search-input" autocomplete="off" oninput="renderApps()" placeholder="Cari nama atau keyword..." 
-                    class="w-full pl-10 pr-4 py-2 rounded-xl glass-card text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition">
+                    class="w-full pl-10 pr-4 py-3 rounded-xl glass-card text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition">
             </div>
         </div>
 
-        <p id="result-count" class="text-xs text-slate-500 mb-4" role="status" aria-live="polite"></p>
+        <p id="result-count" class="text-xs text-slate-400 mb-4" role="status" aria-live="polite"></p>
 
         <!-- App Cards Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="apps-grid"></div>
@@ -142,7 +148,7 @@
     <!-- Detail Modal -->
     <div id="app-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md hidden transition-opacity duration-300">
         <div class="glass-card w-full max-w-2xl rounded-2xl p-6 md:p-8 relative border border-indigo-500/30 shadow-2xl bg-slate-900/95 text-slate-200 max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <button type="button" onclick="closeModal()" aria-label="Tutup detail" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition">
+            <button type="button" onclick="closeModal()" aria-label="Tutup detail" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2.5 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             <div id="modal-content"></div>
@@ -150,7 +156,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="mt-16 border-t border-slate-800/80 glass-card py-6 px-6 text-center text-xs text-slate-500">
+    <footer class="mt-16 border-t border-slate-800/80 glass-card py-6 px-6 text-center text-xs text-slate-400">
         © 2026 Iqbal Mantam • Enterprise Application Portfolio
     </footer>
 
@@ -445,7 +451,7 @@
             const container = document.getElementById("category-tabs");
             if (!container) return;
             container.innerHTML = categories.map(cat => `
-                <button type="button" data-cat="${cat}" aria-pressed="${cat === currentCategory}" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${cat === currentCategory ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'glass-card text-slate-400 hover:text-white border border-slate-800'}">
+                <button type="button" data-cat="${cat}" aria-pressed="${cat === currentCategory}" class="px-4 min-h-[44px] rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${cat === currentCategory ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'glass-card text-slate-400 hover:text-white border border-slate-800'}">
                     ${cat}
                 </button>
             `).join('');
@@ -484,23 +490,23 @@
                             <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md">
                                 <i data-lucide="${app.icon || 'app-window'}" class="w-5 h-5"></i>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
                         </div>
                         <h3 class="text-lg font-bold text-white mb-2">${app.title}</h3>
-                        <p class="text-slate-400 text-xs leading-relaxed mb-4">${app.desc}</p>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">${app.desc}</p>
                         
                         <!-- Tech Stack Badges -->
                         <div class="flex flex-wrap gap-1.5 mb-6">
-                            ${(app.techStack || []).map(t => `<span class="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-800/80 text-slate-300 border border-slate-700/50">${t}</span>`).join('')}
+                            ${(app.techStack || []).map(t => `<span class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-800/80 text-slate-300 border border-slate-700/50">${t}</span>`).join('')}
                         </div>
                     </div>
                     
                     <div class="flex items-center gap-2">
-                        <button type="button" onclick="openModal('${app.id}')" aria-label="Lihat detail ${app.title}" class="flex-1 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition border border-slate-700">
+                        <button type="button" onclick="openModal('${app.id}')" aria-label="Lihat detail ${app.title}" class="flex-1 min-h-[44px] py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition border border-slate-700">
                             <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-400"></i>
                             <span>Detail</span>
                         </button>
-                        <a href="${app.url}" target="_blank" rel="noopener noreferrer" aria-label="Buka ${app.title} di tab baru" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition shadow-lg shadow-indigo-600/20">
+                        <a href="${app.url}" target="_blank" rel="noopener noreferrer" aria-label="Buka ${app.title} di tab baru" class="flex-1 min-h-[44px] py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition shadow-lg shadow-indigo-600/20">
                             <span>Buka App</span>
                             <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                         </a>
@@ -523,8 +529,8 @@
                         </div>
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${app.status || 'Active'}</span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${app.status || 'Active'}</span>
                             </div>
                             <h3 id="modal-title" class="text-xl font-extrabold text-white">${app.title}</h3>
                         </div>
