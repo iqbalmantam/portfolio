@@ -51,6 +51,9 @@
         button, a[href] { cursor: pointer; }
         h1, h2, h3 { text-wrap: balance; }
         #search-input:focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; border-color: #818cf8; }
+        #category-tabs { scrollbar-width: none; -ms-overflow-style: none; }
+        #category-tabs::-webkit-scrollbar { display: none; }
+        @media (max-width: 767px) { #category-tabs { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); } }
         .glow-effect { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; pointer-events: none; }
     </style>
 </head>
@@ -111,7 +114,7 @@
             <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto px-1 pt-1 pb-2 md:pb-1" id="category-tabs" role="group" aria-label="Filter kategori"></div>
 
             <div class="relative w-full md:w-72">
-                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <i data-lucide="search" class="w-4 h-4 absolute z-10 pointer-events-none left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 <label for="search-input" class="sr-only">Cari aplikasi</label>
                 <input type="search" id="search-input" autocomplete="off" oninput="renderApps()" placeholder="Cari nama atau keyword..." 
                     class="w-full pl-10 pr-4 py-3 rounded-xl glass-card text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition">
