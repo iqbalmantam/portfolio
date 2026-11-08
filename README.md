@@ -24,3 +24,9 @@ Edit array `appsData` di `index.html`. Setiap aplikasi punya field:
 | `kegunaan`, `kelebihan`, `kemampuan` | Isi modal detail |
 
 Perubahan yang di-push ke branch `main` otomatis tayang lewat GitHub Pages.
+
+## Asisten virtual 3D
+
+Kolom search diganti asisten 3D (`assets/`): `assistant.js` (UI), `assistant-brain.js` (pencarian pintar),
+`assistant-motion.js` (animasi jalan/loncat/senyum), `assistant-3d.js` (three.js + three-vrm), `assistant.vrm` (model).
+Tanpa WebGL atau saat CDN gagal, asisten otomatis menjadi chat teks. Ubah nama pemilik di `assistant.js` (`ownerName`).
