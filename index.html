@@ -62,8 +62,10 @@
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-indigo-600 focus:text-white focus:text-sm focus:font-semibold">Lewati ke konten</a>
 
     <!-- Background Ambient Glows -->
-    <div class="glow-effect top-[-100px] left-[-100px]"></div>
-    <div class="glow-effect top-[30%] right-[-100px]"></div>
+    <div class="fixed inset-0 overflow-hidden pointer-events-none" style="z-index:-1" aria-hidden="true">
+        <div class="glow-effect top-[-100px] left-[-100px]"></div>
+        <div class="glow-effect top-[30%] right-[-100px]"></div>
+    </div>
 
     <!-- Header Navigation -->
     <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80 px-6 py-4">
@@ -586,7 +588,7 @@
             document.body.classList.add("overflow-hidden");
             lucide.createIcons();
             const closeBtn = document.querySelector('#app-modal [aria-label="Tutup detail"]');
-            if (closeBtn) closeBtn.focus();
+            if (closeBtn) closeBtn.focus({ preventScroll: true });
         }
 
         function closeModal() {
