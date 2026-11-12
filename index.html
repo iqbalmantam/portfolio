@@ -227,6 +227,7 @@
     <!-- Footer -->
     <footer class="mt-16 border-t border-slate-800/80 glass-card py-6 px-6 text-center text-xs text-slate-400">
         © 2026 Iqbal Mantam • Enterprise Application Portfolio
+        <span id="visitor-box" class="hidden"> • <span id="visitor-count">0</span> kunjungan</span>
     </footer>
 
     <script>
@@ -756,6 +757,17 @@
                 else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
             }
         });
+    </script>
+    <script>
+        // Jumlah kunjungan dari GoatCounter; tetap tersembunyi jika gagal dimuat
+        fetch("https://iqbalmantam.goatcounter.com/counter/TOTAL.json")
+            .then(r => r.ok ? r.json() : Promise.reject())
+            .then(d => {
+                if (!d || d.count == null) return;
+                document.getElementById("visitor-count").textContent = d.count;
+                document.getElementById("visitor-box").classList.remove("hidden");
+            })
+            .catch(() => {});
     </script>
     <script data-goatcounter="https://iqbalmantam.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
