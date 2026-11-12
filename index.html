@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iqbal Mantam — Applications Hub</title>
-    <meta name="description" content="Aplikasi bisnis siap pakai untuk UMKM dan dashboard custom untuk gudang dan logistik. Portfolio Iqbal Mantam: 19 aplikasi.">
+    <meta name="description" content="Aplikasi bisnis siap pakai untuk UMKM dan dashboard custom untuk gudang dan logistik. Portfolio Iqbal Mantam: 20 aplikasi.">
     <meta name="theme-color" content="#080C14">
     <meta name="color-scheme" content="dark">
     <link rel="canonical" href="https://iqbalmantam.github.io/portfolio/">
@@ -13,14 +13,14 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="id_ID">
     <meta property="og:title" content="Iqbal Mantam — Applications Hub">
-    <meta property="og:description" content="Aplikasi bisnis siap pakai untuk UMKM dan dashboard custom untuk gudang dan logistik. Portfolio Iqbal Mantam: 19 aplikasi.">
+    <meta property="og:description" content="Aplikasi bisnis siap pakai untuk UMKM dan dashboard custom untuk gudang dan logistik. Portfolio Iqbal Mantam: 20 aplikasi.">
     <meta property="og:url" content="https://iqbalmantam.github.io/portfolio/">
     <meta property="og:image" content="https://iqbalmantam.github.io/portfolio/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Iqbal Mantam — Applications Hub">
-    <meta name="twitter:description" content="Aplikasi bisnis siap pakai untuk UMKM dan dashboard custom untuk gudang dan logistik. Portfolio Iqbal Mantam: 19 aplikasi.">
+    <meta name="twitter:description" content="Aplikasi bisnis siap pakai untuk UMKM dan dashboard custom untuk gudang dan logistik. Portfolio Iqbal Mantam: 20 aplikasi.">
     <meta name="twitter:image" content="https://iqbalmantam.github.io/portfolio/og-image.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -152,7 +152,7 @@
                     <ul class="space-y-2 text-sm text-slate-300 mb-6">
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span><a href="https://iqbalmantam.github.io/portfolio/demo/pic-racking/" target="_blank" rel="noopener noreferrer" class="underline decoration-slate-600 hover:decoration-indigo-400 hover:text-white">Monitoring dan audit racking dengan data inspeksi per PIC</a></span></li>
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span><a href="https://iqbalmantam.github.io/portfolio/demo/rak-view/" target="_blank" rel="noopener noreferrer" class="underline decoration-slate-600 hover:decoration-indigo-400 hover:text-white">Peta kapasitas rak: kondisi sekarang dan rencana penambahan</a></span></li>
-                        <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span>Simulasi dan denah gudang 3D untuk perencanaan tata letak</span></li>
+                        <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span><a href="https://iqbalmantam.github.io/portfolio/demo/gudang-live/" target="_blank" rel="noopener noreferrer" class="underline decoration-slate-600 hover:decoration-indigo-400 hover:text-white">Simulasi gudang langsung: truk, dock, dan pengiriman</a>, serta denah gudang 3D untuk tata letak</span></li>
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span>Org chart dan analisis span of control</span></li>
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span>Dashboard berita logistik dan tes kompetensi kandidat logistik</span></li>
                     </ul>
@@ -209,6 +209,7 @@
                 <li><a class="text-indigo-300 underline" href="https://iqbalmantam.github.io/Ghost-hunter/" rel="noopener noreferrer">Ghost Detector Pro</a></li>
                 <li><a class="text-indigo-300 underline" href="https://iqbalmantam.github.io/portfolio/demo/rak-view/" rel="noopener noreferrer">Peta Rak Gudang</a></li>
                 <li><a class="text-indigo-300 underline" href="https://iqbalmantam.github.io/portfolio/demo/pic-racking/" rel="noopener noreferrer">Audit Racking per PIC</a></li>
+                <li><a class="text-indigo-300 underline" href="https://iqbalmantam.github.io/portfolio/demo/gudang-live/" rel="noopener noreferrer">Gudang Live</a></li>
             </ul>
         </noscript>
 
@@ -568,6 +569,24 @@
                     "Denah rak berwarna menurut persentase kepatuhan tiap PIC, klik untuk melihat detail",
                     "Daftar rak yang belum dicek, leaderboard kepatuhan PIC, dan riwayat inspeksi terbaru",
                     "Ekspor data ke CSV dan cetak ke PDF"
+                ]
+            },
+            { 
+                id: "20", 
+                title: "Gudang Live", 
+                category: "Logistik & Gudang", 
+                desc: "Simulasi gudang secara langsung: truk, dock, forklift, dan pengiriman dalam tampilan isometrik. Contoh dengan data simulasi.", 
+                url: "https://iqbalmantam.github.io/portfolio/demo/gudang-live/", 
+                icon: "truck",
+                status: "Demo Tersedia",
+                techStack: ["HTML", "Canvas", "Simulasi real-time"],
+                kegunaan: "Memantau aktivitas gudang dalam satu layar: truk masuk dan keluar, penggunaan dock, stok di tangan, ketepatan waktu, dan pelacakan tiap pengiriman.",
+                kelebihan: "Satu file HTML tanpa server dan tanpa instalasi. Tampilan peta isometrik yang mudah dipahami oleh tim operasional maupun manajemen. Halaman contoh ini memakai data simulasi yang berjalan otomatis, bukan data perusahaan nyata.",
+                kemampuan: [
+                    "Peta gudang isometrik dengan truk bergerak menuju dock, dapat diputar dan diperbesar",
+                    "Ringkasan stok, jumlah truk di lokasi, dan persentase tepat waktu",
+                    "Aktivitas langsung dan lacak pengiriman dari konfirmasi sampai selesai",
+                    "Pencarian truk, dock, forklift, atau pengiriman, serta daftar dock dan forklift"
                 ]
             }
         ];

@@ -1,13 +1,13 @@
 # portfolio
 
-Landing page portofolio aplikasi Iqbal Mantam: 19 aplikasi untuk asesmen psikometri, rekrutmen, analisis data, bisnis, logistik, dan tools kreatif.
+Landing page portofolio aplikasi Iqbal Mantam: 20 aplikasi untuk asesmen psikometri, rekrutmen, analisis data, bisnis, logistik, dan tools kreatif.
 
 Live: https://iqbalmantam.github.io/portfolio/
 
 ## Struktur
 
 - `index.html`: halaman tunggal (Tailwind via CDN, ikon Lucide, font Plus Jakarta Sans). Daftar aplikasi ada di array `appsData`.
-- `demo/rak-view/` dan `demo/pic-racking/`: contoh untuk perusahaan logistik, **memakai data simulasi** (nama client, brand, dan PIC fiktif).
+- `demo/rak-view/`, `demo/pic-racking/`, dan `demo/gudang-live/`: contoh untuk perusahaan logistik, **memakai data simulasi** (nama client, brand, PIC, dan lokasi fiktif).
 - `og-image.png`: gambar pratinjau (1200x630) saat link dibagikan di WhatsApp, LinkedIn, dan media sosial lain.
 
 ## Menambah atau mengubah aplikasi
