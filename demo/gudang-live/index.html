@@ -199,7 +199,7 @@ canvas:active{cursor:grabbing}
   </div>
   <label class="search">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <input id="q" type="search" placeholder="Cari truk, dock, forklift, atau pengiriman" autocomplete="off" aria-label="Cari truk, dock, forklift, atau pengiriman">
+    <input id="q" type="search" placeholder="Cari truk, dock, atau pengiriman" autocomplete="off" aria-label="Cari truk, dock, atau pengiriman">
   </label>
   <div class="fac">
     <button class="facbtn" id="facbtn" type="button" aria-expanded="false" aria-controls="facmenu">
@@ -239,8 +239,8 @@ canvas:active{cursor:grabbing}
   <section class="card side" aria-label="Status operasional">
     <div class="tabs" role="tablist">
       <button type="button" role="tab" data-tab="dock" aria-selected="false">Dock <span class="n" id="n-dock"></span></button>
-      <button type="button" role="tab" data-tab="fork" aria-selected="false">Forklift <span class="n" id="n-fork"></span></button>
       <button type="button" role="tab" data-tab="truk" aria-selected="true">Truk <span class="n" id="n-truk"></span></button>
+      <button type="button" role="tab" data-tab="plan" aria-selected="false">Rencana <span class="n" id="n-plan"></span></button>
     </div>
     <div class="list" id="list"></div>
     <div class="empty" id="empty" hidden></div>
@@ -292,6 +292,7 @@ function stepIdx(t){
   if(p==='arriving'||p==='queued'||p==='approach')return 2; if(p==='docking'||p==='working')return 3; return 4;
 }
 function setStep(t){
+  if(t.real){ var ri=stepIdx(t); if(ri!==t.si){ if(!t.st[ri]) t.st[ri]=Date.now(); t.si=ri; } return; }
   var i=stepIdx(t); if(i===t.si)return;
   var now=Date.now();
   for(var k=0;k<=i;k++){ if(!t.st[k]) t.st[k]=k<i?now-(i-k)*rnd(20,60)*60000:now; }
@@ -329,6 +330,7 @@ function mkFac(d){
 function ev(f,kind,html){ f.feed.unshift({t:Date.now(),k:kind,h:html}); if(f.feed.length>30)f.feed.pop(); }
 function freeBay(f){return f.bays.indexOf(null)}
 function stLabel(t){
+  if(t.real){ if(t.wx) return 'Tunggu keluar'; if(!t.began) return 'Menunggu'; return t.dir==='in'?'Bongkar':'Muat'; }
   switch(t.phase){
     case 'arriving': case 'approach': return 'Masuk';
     case 'queued': return 'Antre';
@@ -338,6 +340,8 @@ function stLabel(t){
   }
 }
 function stClass(t){
+  if(t.real&&t.wx) return 'p-wait';
+  if(t.real&&!t.began) return 'p-idle';
   return t.phase==='working'?'p-work':(t.phase==='queued'?'p-wait':(t.phase==='leaving'?'p-idle':'p-in'));
 }
 /* ---- gerak truk: jalur melengkung, percepatan halus, jarak aman, trailer mengikuti kabin ---- */
@@ -529,28 +533,35 @@ function assignQueue(f){
   }
 }
 function updTruck(f,t,dt){
-  if(t.rear){ if(t.phase==='leaving'){ if(drive(f,t,dt,4.8)) t.gone=true; setStep(t); } return; }
+  if(t.fi){ t.a=Math.min(1,(t.a||0)+dt*3); if(t.a>=1){ t.a=null; t.fi=false; } }
+  if(t.fo){ t.a=(t.a==null?1:t.a)-dt*3; if(t.a<=0){ if(!lotToDock(f,t)){ t.fo=false; t.a=null; } } return; }
+  if(t.rear){ if(t.phase==='leaving'){ if(drive(f,t,dt,4.8)) endLeave(f,t); setStep(t); } return; }
   switch(t.phase){
     case 'arriving': if(drive(f,t,dt,5.4)) t.phase='queued'; break;
     case 'queued': drive(f,t,dt,5.4); break;
     case 'approach': if(drive(f,t,dt,5.2)){ if(toDock(f,t)) ev(f,'in','<b>'+t.id+'</b> merapat ke '+dn(t)); } break;
-    case 'docking': if(drive(f,t,dt,1.9)){ t.phase='working'; t.prog=0; t.v=0; ev(f,'ok',(t.dir==='in'?'Bongkar':'Muat')+' dimulai di '+dn(t)+' · <b>'+t.id+'</b> · '+t.pallets+' palet'); } break;
+    case 'docking': if(drive(f,t,dt,1.9)){ t.phase='working'; t.prog=0; t.v=0; ev(f,'ok',(t.dir==='in'?'Bongkar':'Muat')+' dimulai di '+dn(t)+' · <b>'+t.id+'</b>'+(t.real?'':' · '+t.pallets+' palet')); } break;
     case 'working':
-      t.prog+=dt/t.dur;
-      f.stock=clamp(f.stock+(t.dir==='in'?1:-1)*t.pallets*dt/t.dur,f.cap*.4,f.cap*.95);
+      if(t.real) realProg(t); else t.prog+=dt/t.dur;
+      if(!t.real) f.stock=clamp(f.stock+(t.dir==='in'?1:-1)*t.pallets*dt/t.dur,f.cap*.4,f.cap*.95);
       if(t.prog>=1){
-        t.prog=1; if(!toLeave(f,t)) break;
+        t.prog=1; if(!(t.wx?toPark(f,t):toLeave(f,t))) break;
         f.bays[t.bay]=null; f.done++;
-        var late=Math.random()<0.04; f.ot=clamp(f.ot+(late?-0.14:0.012),95.5,99.4);
+        var late=!t.real&&Math.random()<0.04; f.ot=clamp(f.ot+(late?-0.14:0.012),95.5,99.4);
         ev(f,late?'warn':'ok','<b>'+t.id+'</b> selesai · '+dn(t)+' kosong'+(late?' · terlambat':''));
       } break;
-    default: if(drive(f,t,dt,4.8)) t.gone=true;
+    case 'parked':
+      if(t.wx){ t.pw=false; break; }
+      if(t.fin){ unPark(f,t); break; }
+      if(t.pw&&t.began&&!t.fi){ var ro=KMI_RE.test((t.client||'')+' '+(t.vendor||'')); if((!ro&&freeBay(f)>=0)||f.rb.indexOf(null)>=0){ t.fo=true; t.a=1; } }
+      break;
+    default: if(drive(f,t,dt,4.8)) endLeave(f,t);
   }
   setStep(t);
 }
 function updFac(f,dt){
   f.spawnT-=dt;
-  if(f.spawnT<=0){ f.spawnT=rnd(6,12); if(f.trucks.length<22&&f.queue.length<2&&spawnClear(f)) spawn(f); }
+  if(f.spawnT<=0){ f.spawnT=rnd(6,12); if(!f.real&&f.trucks.length<22&&f.queue.length<2&&spawnClear(f)) spawn(f); }
   assignQueue(f);
   updRear(f,dt);
   f.trucks.forEach(function(t){updTruck(f,t,dt)});
@@ -575,7 +586,7 @@ function updFac(f,dt){
 }
 
 function rearSide(t){ return !!t.rear&&(t.phase==='docking'||t.phase==='working'||t.y<-12); }
-function dn(t){return t.rear?'Dock B'+(t.rb+1):(t.bay>=0?'Dock D'+(BAYS-t.bay):'Gerbang')}
+function dn(t){return (t.phase==='parked'||t.toPark)?'Parkir tunggu':t.rear?'Dock B'+(t.rb+1):(t.bay>=0?'Dock D'+(BAYS-t.bay):'Gerbang')}
 function spawnClear(f){ return !f.trucks.some(function(t){return t.x>SPAWN_X-9&&t.y>ROAD_Y-2}); }
 function rearOnPath(t){ return !!t.rear&&(t.phase==='arriving'||t.phase==='approach'||t.phase==='docking'||t.phase==='leaving'); }
 function rearPts(i){ var bx=rbayX(i); return [[SPAWN_X,ROAD_Y],[GATE_IN,ROAD_Y],[GATE_IN,RL1],[CL,RL1],[CL,RL2],[bx+6.5,RL2]]; }
@@ -584,6 +595,41 @@ function toRearDock(f,t){
   var rt=mkRoute(bez(p0,[p0[0]-3.5,p0[1]],[bx,RDOCK_Y-5.5],[bx,RDOCK_Y],30),true);
   if(!corridorFree(f,t,rt,16)) return false;
   t.phase='docking'; t.rt=rt; t.s=0; t.v=0; t.th=t.h; return true;
+}
+/* Parkir tunggu keluar gerbang: truk Finish yang belum Sudah Keluar tidak menempati loading dock */
+var LOTN=18;
+function lotXY(i){ return [22-i*2.1,36.5]; }
+function lotFree(f,fx){ f.lot=f.lot||[]; var b=-1, bd=1e9; for(var i=0;i<LOTN;i++){ if(!f.lot[i]){ var d=Math.abs(lotXY(i)[0]-fx); if(d<bd){bd=d;b=i;} } } return b; }
+function parkTo(f,t,i){ var sl=lotXY(i); t.x=sl[0]; t.y=sl[1]; t.h=Math.PI/2; t.th=t.h; t.rt=null; t.v=0; t.phase='parked'; t.rear=false; t.rb=-1; t.bay=-1; t.slot=i; f.lot=f.lot||[]; f.lot[i]=t; }
+function toPark(f,t){
+  if(crossActive(f,t)||laneBusy(f,t)) return false;
+  var i=lotFree(f,t.x); if(i<0) return false;
+  var sl=lotXY(i), pts, bx, r=3.8;
+  if(t.rear){ bx=rbayX(t.rb); pts=[[bx,RDOCK_Y],[bx,RL2],[EXR,RL2],[EXR,LANE_OUT],[sl[0],LANE_OUT],[sl[0],sl[1]]]; r=4.5; }
+  else{ bx=bayX(t.bay); pts=[[bx,CDOCK_Y],[bx,LANE_OUT],[sl[0],LANE_OUT],[sl[0],sl[1]]]; }
+  var rt=mkRoute(sampleRoute(cleanPts(pts),r));
+  if(!corridorFree(f,t,rt,26)) return false;
+  t.phase='leaving'; t.v=0; t.rt=rt; t.s=0; t.toPark=true; t.slot=i; f.lot=f.lot||[]; f.lot[i]=t; return true;
+}
+function unPark(f,t){
+  var rt=mkRoute(sampleRoute(cleanPts([[t.x,t.y],[t.x,ROAD_Y],[EXIT_X,ROAD_Y]]),4.5));
+  if(!corridorFree(f,t,rt,26)) return false;
+  if(t.slot>=0&&f.lot) f.lot[t.slot]=null; t.slot=-1;
+  t.phase='leaving'; t.v=0; t.rt=rt; t.s=0; t.toPark=false; t.a=null; t.fi=false; return true;
+}
+function lotToDock(f,t){
+  var ro=KMI_RE.test((t.client||'')+' '+(t.vendor||'')), b=ro?-1:freeBay(f), rb=f.rb.indexOf(null);
+  if(b<0&&rb<0) return false;
+  if(t.slot>=0&&f.lot) f.lot[t.slot]=null; t.slot=-1; t.pw=false; t.fo=false; t.rt=null; t.v=0;
+  if(b>=0){ t.phase='working'; t.bay=b; t.x=bayX(b); t.y=CDOCK_Y; t.h=Math.PI/2; t.th=t.h; f.bays[b]=t; }
+  else{ t.rear=true; t.rb=rb; t.bay=-1; t.phase='working'; t.x=rbayX(rb); t.y=RDOCK_Y; t.h=-Math.PI/2; t.th=t.h; f.rb[rb]=t; }
+  t.fi=true; t.a=0;
+  ev(f,'ok',(t.dir==='in'?'Bongkar':'Muat')+' dimulai di '+dn(t)+' · <b>'+t.id+'</b>');
+  return true;
+}
+function endLeave(f,t){
+  if(t.toPark){ t.toPark=false; t.phase='parked'; t.rt=null; t.v=0; t.rear=false; t.rb=-1; t.bay=-1; t.h=Math.PI/2; t.th=t.h; }
+  else{ if(t.slot>=0&&f.lot) f.lot[t.slot]=null; t.gone=true; }
 }
 function toRearLeave(f,t){
   if(crossActive(f,t)||laneBusy(f,t)) return false;
@@ -603,7 +649,7 @@ function updRear(f,dt){
   for(var i=0;i<f.rb.length;i++){
     var t=f.rb[i];
     if(!t){
-      f.rwait[i]-=dt;
+      if(f.real) continue; f.rwait[i]-=dt;
       if(f.rwait[i]<=0){
         var busy=f.trucks.filter(function(q){return q.rear&&(q.phase==='approach'||q.phase==='docking')}).length;
         if(!f.queue.length&&busy<1&&!exitActive(f,null)&&spawnClear(f)&&f.trucks.length<22) spawnRear(f,i,false); else f.rwait[i]=2;
@@ -613,9 +659,9 @@ function updRear(f,dt){
     if(t.phase==='approach'){ if(drive(f,t,dt,5.2)) toRearDock(f,t); }
     else if(t.phase==='docking'){ if(drive(f,t,dt,1.9)){ t.phase='working'; t.prog=0; t.v=0; } }
     else if(t.phase==='working'){
-      t.prog+=dt/t.dur;
-      f.stock=clamp(f.stock+(t.dir==='in'?1:-1)*t.pallets*dt/t.dur,f.cap*.4,f.cap*.95);
-      if(t.prog>=1){ t.prog=1; if(toRearLeave(f,t)){ f.done++; f.rb[i]=null; f.rwait[i]=rnd(3,9); ev(f,'ok','<b>'+t.id+'</b> selesai · '+dn(t)+' kosong'); } }
+      if(t.real) realProg(t); else t.prog+=dt/t.dur;
+      if(!t.real) f.stock=clamp(f.stock+(t.dir==='in'?1:-1)*t.pallets*dt/t.dur,f.cap*.4,f.cap*.95);
+      if(t.prog>=1){ t.prog=1; if(t.wx?toPark(f,t):toRearLeave(f,t)){ f.done++; f.rb[i]=null; f.rwait[i]=rnd(3,9); ev(f,'ok','<b>'+t.id+'</b> selesai · '+dn(t)+' kosong'); } }
     }
     setStep(t);
   }
@@ -624,6 +670,13 @@ var FS=FACS.map(mkFac), F=FS[0], paused=false, tab='truk', query='';
 
 /* ---------- Kanvas isometrik ---------- */
 var view=$('#view'), cv=$('#scene'), ctx=cv.getContext('2d');
+if(!ctx.roundRect){ ctx.constructor.prototype.roundRect=function(x,y,w,h,r){ r=Math.min(Array.isArray(r)?r[0]:(r||0),w/2,h/2); this.moveTo(x+r,y); this.arcTo(x+w,y,x+w,y+h,r); this.arcTo(x+w,y+h,x,y+h,r); this.arcTo(x,y+h,x,y,r); this.arcTo(x,y,x+w,y,r); this.closePath(); }; }
+var _errBox=null;
+function showErr(e){
+  if(window.console) console.error('Gudang Live render:',e);
+  if(!_errBox){ _errBox=document.createElement('div'); _errBox.style.cssText='position:fixed;left:12px;top:70px;z-index:99;max-width:60vw;padding:6px 10px;border-radius:8px;background:#7f1d1d;color:#fff;font:12px/1.4 monospace;white-space:pre-wrap'; document.body.appendChild(_errBox); }
+  _errBox.textContent='Error render: '+String((e&&e.stack)||e).slice(0,400);
+}
 var dpr=1, W=0, H=0, S=8, OX=0, OY=0, T=null, hits=[];
 var cam={zoom:1,px:0,py:0}, rot=false;
 function tf(x,y){return rot?[RXS-x,RYS-y]:[x,y]}
@@ -734,6 +787,9 @@ function drawBays(){
 /* ---- siang/malam, cahaya, kehidupan sekitar ---- */
 var CLK=0, tod={mode:'auto',t:.3};
 var TODM=['auto','siang','sore','malam'], TODL={auto:'Auto',siang:'Siang',sore:'Sore',malam:'Malam'}, TODT={siang:.3,sore:.585,malam:.82};
+/* Auto = jam asli Jakarta: 12:00 -> siang terang (.3), 24:00 -> tengah malam (.8) */
+var _jf=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZone:'Asia/Jakarta'});
+function jktTod(){ var p=_jf.formatToParts(new Date()), h=0, m=0; p.forEach(function(x){ if(x.type==='hour')h=+x.value; if(x.type==='minute')m=+x.value; }); return (.3+((h+m/60)-12)/24+1)%1; }
 function sstep(a,b,x){x=clamp((x-a)/(b-a),0,1);return x*x*(3-2*x)}
 function sunInfo(){
   var s=Math.cos((tod.t-.3)*Math.PI*2);
@@ -1099,9 +1155,6 @@ function drawTower(){
   onFace('y',48,17,14,function(){
     ctx.fillStyle=rgba(blue,1); ctx.fillRect(0,0,5.8,14);
     ctx.fillStyle=col(T.wall,.92); ctx.fillRect(.45,.45,4.9,13.55);
-    ftext('DC',2.9,3.4,1.9,rgba(blue,1),800);
-    ftext('DISTRIBUTION',2.9,6.6,.52,rgba(blue,1),700);
-    ftext('CENTER',2.9,7.5,.52,rgba(blue,1),700);
     // garis biru bawah
     ctx.fillStyle=blue; ctx.fillRect(0,13.2,5.8,.8);
   });
@@ -1121,8 +1174,6 @@ function drawGuard(){
   rbox(cx,cy,3,7,5.4,.4,0,lt(T.wall,.9),lt(T.wall,.96));
   onFace('y',cx+2.3,cy+1.8,3,function(){
     ctx.fillStyle=rgba(T.accent,1); ctx.fillRect(0,.05,4.6,1.45);
-    ftext('DC',2.3,.5,.62,'#ffffff',800);
-    ftext('DISTRIBUTION CENTER',2.3,1.12,.27,'#ffffff',700);
     ctx.fillStyle='rgba(70,150,165,.92)'; ctx.fillRect(.3,1.75,4,.85);
     ctx.fillStyle=rgba(T.wall,.9); ctx.fillRect(2.2,1.75,.1,.85);
   });
@@ -1190,6 +1241,32 @@ function drawCar(x,y,c){
   rbox(x,y,.2,2.4,1.05,.6,Math.PI/2,c,c);
   rbox(x,y+.08,.8,1.2,.9,.45,Math.PI/2,[225,232,238],[238,242,246]);
 }
+var VSPEC={
+  def:{L:4.4,w:1.45,h:2.0,cl:1.25,cw:1.4,ch:1.7,art:true},
+  moto:{L:1.5,w:.7,h:.8,cl:.7,cw:.7,ch:.8},
+  mini:{L:1.9,w:1.0,h:1.1,cl:.9,cw:1.0,ch:1.1},
+  blind:{L:2.7,w:1.1,h:1.3,cl:.8,cw:1.1,ch:1.3},
+  pick:{L:2.1,w:1.0,h:1.1,cl:.95,cw:1.0,ch:1.2},
+  cde:{L:2.6,w:1.1,h:1.4,cl:1.0,cw:1.1,ch:1.35},
+  cdd:{L:3.3,w:1.25,h:1.7,cl:1.1,cw:1.25,ch:1.55},
+  fuso:{L:3.9,w:1.4,h:1.9,cl:1.2,cw:1.35,ch:1.65},
+  c20:{L:2.9,w:1.3,h:1.8,cl:1.25,cw:1.4,ch:1.7,art:true,cont:true},
+  c40:{L:4.8,w:1.3,h:1.8,cl:1.25,cw:1.4,ch:1.7,art:true,cont:true},
+  big:{L:4.8,w:1.55,h:2.4,cl:1.25,cw:1.4,ch:1.7,art:true}
+};
+function vspec(ty){
+  var x=String(ty||'').toLowerCase(); if(!x) return VSPEC.def;
+  if(/motor|sepeda/.test(x)) return VSPEC.moto;
+  if(/mini\s*van/.test(x)) return VSPEC.mini;
+  if(/blind|\bvan\b/.test(x)) return VSPEC.blind;
+  if(/grand\s*max|pick\s*up|l300|carry/.test(x)) return VSPEC.pick;
+  if(/cdd|double/.test(x)) return VSPEC.cdd;
+  if(/\bcde\b|engkel/.test(x)) return VSPEC.cde;
+  if(/fuso|medium/.test(x)) return VSPEC.fuso;
+  if(/big\s*mama/.test(x)) return VSPEC.big;
+  if(/cont/.test(x)) return /20/.test(x)?VSPEC.c20:VSPEC.c40;
+  return VSPEC.def;
+}
 function drawTruck(t,sel){
   var a=1;
   if(t.a!=null) a=clamp(t.a,0,1);
@@ -1199,22 +1276,30 @@ function drawTruck(t,sel){
   var hv=[Math.cos(t.h),Math.sin(t.h)], th=t.th==null?t.h:t.th, tv=[Math.cos(th),Math.sin(th)];
   if(sel) flat(t.x,t.y,7.4,2.7,t.h,0,rgba(T.accent,.14),rgba(T.accent,.95),2);
   flat(t.x+.6,t.y+.4,6.2,1.6,t.h,0,T.shade);
-  var H=[t.x+hv[0]*1.45,t.y+hv[1]*1.45];
-  var tc=[H[0]-tv[0]*2.15,H[1]-tv[1]*2.15], cc=[t.x+hv[0]*2.25,t.y+hv[1]*2.25];
-  rbox(tc[0],tc[1],.18,4.5,1.2,.4,th,[40,48,60],[40,48,60]);
+  if(!t.spec||t.specK!==t.vtype){ t.specK=t.vtype; t.spec=vspec(t.vtype); }
+  var sp=t.spec, L=sp.L;
+  if(!sp.art){ th=t.h; tv=hv; }
   var pv=[-hv[1],hv[0]], pt=[-tv[1],tv[0]];
-  [-1.4,-.2,1.0,-3.0].forEach(function(k){ [-1,1].forEach(function(sd){ rbox(tc[0]+tv[0]*k+pt[0]*sd*.74,tc[1]+tv[1]*k+pt[1]*sd*.74,0,.8,.26,.58,th,[18,22,28],[26,30,38]); }); });
-  [1,-1].forEach(function(sd){ rbox(cc[0]+pv[0]*sd*.66,cc[1]+pv[1]*sd*.66,0,.85,.26,.58,t.h,[18,22,28],[26,30,38]); });
+  /* ujung belakang tetap di titik yang sama (pas di dock), panjang bodi mengikuti jenis kendaraan */
+  var Rp=[t.x+hv[0]*1.45-tv[0]*4.35,t.y+hv[1]*1.45-tv[1]*4.35];
+  var tc=[Rp[0]+tv[0]*L/2,Rp[1]+tv[1]*L/2], cc;
+  if(sp.art){ var Pv=[Rp[0]+tv[0]*(L-.05),Rp[1]+tv[1]*(L-.05)]; cc=[Pv[0]+hv[0]*.8,Pv[1]+hv[1]*.8]; }
+  else{ var cd=L+.15+sp.cl/2; cc=[Rp[0]+hv[0]*cd,Rp[1]+hv[1]*cd]; }
+  rbox(tc[0],tc[1],.18,L+.1,sp.w*.83,.4,th,[40,48,60],[40,48,60]);
+  var axl=L>=3.8?[-L*.3,-L*.3+1.2,L*.28]:[-L*.28,L*.25];
+  axl.forEach(function(k){ [-1,1].forEach(function(sd){ rbox(tc[0]+tv[0]*k+pt[0]*sd*(sp.w/2+.01),tc[1]+tv[1]*k+pt[1]*sd*(sp.w/2+.01),0,.8,.26,.58,th,[18,22,28],[26,30,38]); }); });
+  [1,-1].forEach(function(sd){ rbox(cc[0]+pv[0]*sd*(sp.cw*.47),cc[1]+pv[1]*sd*(sp.cw*.47),0,.85,.26,.58,t.h,[18,22,28],[26,30,38]); });
   var drawTr=function(){
-    rbox(tc[0],tc[1],.55,4.4,1.45,2.0,th,t.col,lt(t.col,1.14));
-    rbox(tc[0],tc[1],.55,4.42,1.47,.18,th,lt(t.col,.78),lt(t.col,.78));
-    rbox(tc[0]-tv[0]*2.2,tc[1]-tv[1]*2.2,.7,.08,1.3,.3,th,[220,40,36],[240,70,60]);
+    rbox(tc[0],tc[1],.55,L,sp.w,sp.h,th,t.col,lt(t.col,1.14));
+    if(sp.cont){ for(var q=-L/2+.35;q<L/2-.1;q+=.5) rbox(tc[0]+tv[0]*q,tc[1]+tv[1]*q,.55,.07,sp.w+.03,sp.h+.02,th,lt(t.col,.8),lt(t.col,.84)); }
+    else rbox(tc[0],tc[1],.55,L+.02,sp.w+.02,.18,th,lt(t.col,.78),lt(t.col,.78));
+    rbox(tc[0]-tv[0]*L/2,tc[1]-tv[1]*L/2,.7,.08,sp.w*.9,.3,th,[220,40,36],[240,70,60]);
   };
   var drawCab=function(){
-    rbox(cc[0],cc[1],.35,1.25,1.4,1.7,t.h,t.cab,lt(t.cab,1.18));
-    rbox(cc[0]+hv[0]*.5,cc[1]+hv[1]*.5,1.3,.27,1.25,.55,t.h,[40,58,82],[96,128,160]);
-    rbox(cc[0]+hv[0]*.64,cc[1]+hv[1]*.64,.52,.1,1.3,.2,t.h,[40,44,52],[52,58,68]);
-    [1,-1].forEach(function(sd){ rbox(cc[0]+hv[0]*.66+pv[0]*sd*.48,cc[1]+hv[1]*.66+pv[1]*sd*.48,.62,.08,.26,.2,t.h,[255,244,190],[255,250,220]); });
+    rbox(cc[0],cc[1],.35,sp.cl,sp.cw,sp.ch,t.h,t.cab,lt(t.cab,1.18));
+    rbox(cc[0]+hv[0]*sp.cl*.4,cc[1]+hv[1]*sp.cl*.4,sp.ch-.4,.27,sp.cw*.89,.55,t.h,[40,58,82],[96,128,160]);
+    rbox(cc[0]+hv[0]*sp.cl*.51,cc[1]+hv[1]*sp.cl*.51,.52,.1,sp.cw*.93,.2,t.h,[40,44,52],[52,58,68]);
+    [1,-1].forEach(function(sd){ rbox(cc[0]+hv[0]*sp.cl*.53+pv[0]*sd*sp.cw*.34,cc[1]+hv[1]*sp.cl*.53+pv[1]*sd*sp.cw*.34,.62,.08,.26,.2,t.h,[255,244,190],[255,250,220]); });
   };
   if((cc[0]+cc[1]>tc[0]+tc[1])!==rot){drawTr();drawCab()}else{drawCab();drawTr()}
   ctx.globalAlpha=1;
@@ -1258,13 +1343,14 @@ function chip(x,y,id,status,color,sel){
 function drawLabels(){
   F.trucks.forEach(function(t){
     var sel=t.id===F.sel;
+    if(t.x<=SPAWN_X-4&&t.x>=-26){ var hp=P(t.x,t.y,3.6); hits.push({id:t.id,x:hp[0],y:hp[1]+S*2}); }
     if(!sel&&(S<4.6||rearSide(t)!==rot))return;
     if(t.x>SPAWN_X-4||t.x<-26)return;
     var p=P(t.x,t.y,3.6), lift=sel?30:(t.n%2?20:36);
     var c=t.phase==='working'?(t.dir==='in'?T.ok:T.accent):(t.phase==='queued'?T.warn:T.accent);
     ctx.strokeStyle=T.line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.lineTo(p[0],p[1]-lift+10); ctx.stroke();
+    if(isLong(t)) c=T.warn;
     chip(p[0],p[1]-lift,t.id,stLabel(t),c,sel);
-    hits.push({id:t.id,x:p[0],y:p[1]+S*2});
   });
 }
 function render(){
@@ -1301,10 +1387,16 @@ function setRot(v){ rot=!!v; var b=$('#rot'); b.textContent=rot?'Belakang':'Depa
 $('#rot').addEventListener('click',function(){setRot(!rot)});
 $('#tod').addEventListener('click',function(){ tod.mode=TODM[(TODM.indexOf(tod.mode)+1)%TODM.length]; $('#tod').textContent=TODL[tod.mode]; });
 function focusSel(){ var t=F.trucks.filter(function(x){return x.id===F.sel})[0]; if(t&&rearSide(t)!==rot) setRot(rearSide(t)); }
+cv.addEventListener('pointermove',function(e){
+  if(drag) return;
+  var r=cv.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top, o=false;
+  for(var i=0;i<hits.length;i++){ if(Math.hypot(hits[i].x-x,hits[i].y-y)<40){ o=true; break; } }
+  cv.style.cursor=o?'pointer':'';
+});
 function pickAt(e){
   var r=cv.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top, best=null, bd=48;
   hits.forEach(function(h){var d=Math.hypot(h.x-x,h.y-y); if(d<bd){bd=d;best=h}});
-  if(best){F.sel=best.id; setTab('truk'); ui(true);}
+  if(best){F.sel=best.id; setTab('truk'); ui(true); setTimeout(function(){ var el=listEl.querySelector('.row.on'); if(el&&el.scrollIntoView) el.scrollIntoView({block:'nearest'}); },60); }
 }
 
 /* ---------- Panel ---------- */
@@ -1340,11 +1432,32 @@ function trukRows(){
   var out=[];
   arr.forEach(function(t){
     var where=dn(t);
-    var hay=[t.id,t.ship,where,stLabel(t),t.city,t.dir==='in'?'inbound masuk':'outbound keluar'].join(' ');
+    var hay=hayOf(t);
     if(!match(hay))return;
-    var pr=t.phase==='working'?'<div class="prog"><i style="--w:'+Math.round(t.prog*100)+'%;--c2:'+(t.dir==='in'?'var(--ok)':'var(--accent)')+'"></i></div>':'';
+    if(!opPass(t,OPF))return;
+    var pr=(t.phase==='working'&&!(t.real&&(!t.began||t.wx)))?'<div class="prog"><i style="--w:'+Math.round(t.prog*100)+'%;--c2:'+(t.dir==='in'?'var(--ok)':'var(--accent)')+'"></i></div>':'';
     out.push({k:'t'+t.id,t:t.id,cls:'row'+(t.id===F.sel?' on':''),
-      html:'<span class="bar" style="--c:rgb('+t.col.join(',')+')"></span><span class="t"><b>'+t.id+'</b><small>'+F.id+' · '+where+' · '+(t.dir==='in'?'Inbound':'Outbound')+' · '+t.pallets+' palet</small>'+pr+'</span><span class="pill '+stClass(t)+'">'+stLabel(t)+(t.phase==='working'?' '+Math.round(t.prog*100)+'%':'')+'</span>'});
+      html:'<span class="bar" style="--c:rgb('+t.col.join(',')+')"></span><span class="t"><b>'+t.id+'</b><small>'+(t.real?'':F.id+' · ')+where+' · '+(t.dir==='in'?'Inbound':'Outbound')+' · '+(t.real?esc(t.vendor||t.vtype||'–'):t.pallets+' palet')+(isLong(t)?' · <b style="color:var(--warn)">⚠ '+fmtDur(Date.now()-t.tin)+'</b>':'')+'</small>'+pr+'</span><span class="pill '+stClass(t)+'">'+stLabel(t)+(t.phase==='working'&&!(t.real&&!t.began)?' '+Math.round(t.prog*100)+'%':'')+'</span>'});
+  });
+  return out;
+}
+var PLF='all', PL_DEF=[['all','Semua'],['Belum datang','Belum datang'],['Di lokasi','Di lokasi'],['Proses','Proses'],['Selesai','Selesai'],['Lewat window','Lewat window']];
+function plPass(a,k){ return k==='all'||a.st===k; }
+function planRows(){
+  var f=F, out=[];
+  if(!f.real) return [{k:'pl-na',t:'',cls:'row',html:'<span class="t"><b>Rencana hari ini</b><small>Menunggu data simulasi</small></span>'}];
+  var all=f.rPlanRows||[], c={};
+  all.forEach(function(a){ c[a.st]=(c[a.st]||0)+1; });
+  var pal=0, palD=0; all.forEach(function(a){ pal+=a.pal||0; if(a.st!=='Belum datang'&&a.st!=='Lewat window') palD+=a.pal||0; });
+  out.push({k:'pl-sum',t:'',cls:'row',html:'<span class="t"><b>Rencana hari ini · '+all.length+' truk</b><small>Datang '+(all.length-(c['Belum datang']||0)-(c['Lewat window']||0))+' · Selesai '+(c['Selesai']||0)+' · Belum '+((c['Belum datang']||0)+(c['Lewat window']||0))+' · Palet '+NF.format(palD)+' / '+NF.format(pal)+'</small></span>'});
+  all.forEach(function(a,i){
+    if(!plPass(a,PLF)) return;
+    var hay=[a.id,a.client,a.doc,a.origin,a.st,a.dir==='out'?'outbound':'inbound'].join(' ').toLowerCase();
+    if(!match(hay)) return;
+    var cls=a.st==='Selesai'?'p-work':(a.st==='Lewat window'?'p-wait':(a.st==='Belum datang'?'p-idle':'p-in'));
+    var meta=[a.dir==='out'?'Outbound':'Inbound',a.client||'',a.doc||'',a.pal?a.pal+' palet':'',a.win?opHM(a.win.a)+'–'+opHM(a.win.b):'',(a.tid&&a.tid!==a.id)?'aktual '+a.tid+(a.by==='klien'?' (perkiraan klien)':''):'',a.tin?'masuk '+tfm.format(new Date(a.tin)):''].filter(Boolean).map(esc).join(' · ');
+    out.push({k:'pl'+i+'|'+a.id+'|'+a.doc,t:'',cls:'row',
+      html:'<span class="bar" style="--c:'+(a.dir==='out'?'var(--accent)':'var(--ok)')+'"></span><span class="t"><b>'+esc(a.id)+'</b><small>'+meta+'</small></span><span class="pill '+cls+'">'+a.st+'</span>'});
   });
   return out;
 }
@@ -1390,6 +1503,7 @@ var STEPS_OUT=['Dikonfirmasi','Picking','Antre dock','Muat','Segel & jalan','Sel
 function shipHTML(){
   var t=F.trucks.filter(function(x){return x.id===F.sel})[0];
   if(!t) return '<div class="empty">Pilih truk di peta atau di daftar untuk melacak pengiriman.</div>';
+  if(t.real) return realShipHTML(t);
   var steps=t.dir==='in'?STEPS_IN:STEPS_OUT, li='';
   steps.forEach(function(s,i){
     var cls=i<t.si?'done':(i===t.si?'cur':''), tm=t.st[i]&&i<=t.si?tfm.format(new Date(t.st[i])):'–';
@@ -1407,22 +1521,24 @@ function ui(force){
   var inb=f.trucks.filter(function(t){return t.dir==='in'}).length, outb=onsite-inb;
   var util=Math.round(f.stock/f.cap*100), busy=f.bays.filter(Boolean).length+f.rb.filter(Boolean).length;
   $('#fcode').textContent=f.id; $('#fname').textContent=f.name;
-  $('#fsub').textContent=busy+'/'+(BAYS+RBAYS)+' dock terpakai · '+util+'% kapasitas';
+  $('#fsub').textContent=busy+'/'+(BAYS+RBAYS)+' dock terpakai'+(f.real?'':' · '+util+'% kapasitas');
   $('#feedloc').textContent=f.id;
   var sd=1.8+(f.stock-f.base)/f.base*100, od=0.4+(f.ot-f.hOt[0]);
   setHTML(kpisEl,
-    '<article class="card kpi"><h3>Stok di tangan</h3><div class="v">'+NF.format(Math.round(f.stock))+'<small>palet</small></div><div class="sub">'+dl(sd)+f.id+'</div><div class="sp">'+spark(f.hStock)+'</div></article>'+
-    '<article class="card kpi"><h3>Truk di lokasi</h3><div class="v">'+onsite+'</div><div class="sub">'+inb+' inbound · '+outb+' outbound</div><div class="sp">'+spark(f.hTruck)+'</div></article>'+
-    '<article class="card kpi"><h3>Tepat waktu</h3><div class="v">'+pf(f.ot,1)+'<small>%</small></div><div class="sub">'+dl(od)+'30 hari</div><div class="sp">'+spark(f.hOt)+'</div></article>');
+    (f.real?'':'<article class="card kpi"><h3>Stok di tangan</h3><div class="v">'+NF.format(Math.round(f.stock))+'<small>palet</small></div><div class="sub">'+(f.real?'':dl(sd))+f.id+'</div><div class="sp">'+spark(f.hStock)+'</div></article>')+
+    '<article class="card kpi"><h3>Truk di lokasi</h3><div class="v">'+onsite+'</div><div class="sub">'+(f.real&&f.trucks.filter(isLong).length?inb+' in · '+outb+' out · <b style="color:var(--warn)">'+f.trucks.filter(isLong).length+' lama</b>':inb+' inbound · '+outb+' outbound')+'</div><div class="sp">'+spark(f.hTruck)+'</div></article>'+
+    (f.real?'<article class="card kpi"><h3>Rencana hari ini</h3><div class="v">'+(f.rPlan?f.rPlan.n:0)+'<small>truk</small></div><div class="sub">'+(f.rPlan?f.rPlan.inb+' inbound · '+f.rPlan.outb+' outbound':'rencana')+'</div></article>':
+    '<article class="card kpi"><h3>Tepat waktu</h3><div class="v">'+pf(f.ot,1)+'<small>%</small></div><div class="sub">'+dl(od)+'30 hari</div><div class="sp">'+spark(f.hOt)+'</div></article>'));
   var fh='';
   f.feed.slice(0,7).forEach(function(e){fh+='<div class="ev '+e.k+'"><i></i><span>'+e.h+'</span><time>'+tfs.format(new Date(e.t))+'</time></div>'});
   setHTML(feedEl,fh);
-  var rows=tab==='dock'?dockRows():(tab==='fork'?forkRows():trukRows());
+  try{ opChips(); }catch(_){}
+  var rows=tab==='dock'?dockRows():(tab==='plan'?planRows():trukRows());
   sync(listEl,rows);
   if(!rows.length){emptyEl.hidden=false;emptyEl.textContent=query?'Tidak ada hasil untuk “'+query+'”.':'Belum ada data.'}else emptyEl.hidden=true;
   $('#n-dock').textContent=busy+'/'+(BAYS+RBAYS);
-  $('#n-fork').textContent=f.fk.filter(function(k,i){return f.bays[i]&&f.bays[i].phase==='working'}).length+'/'+BAYS;
   $('#n-truk').textContent=onsite;
+  $('#n-plan').textContent=f.real?(f.rPlan?f.rPlan.n:0):'–';
   setHTML(shipEl,shipHTML());
   if(fmOpen||force)renderMenu();
 }
@@ -1459,15 +1575,525 @@ $('#live').addEventListener('click',function(){
   paused=!paused; this.setAttribute('aria-pressed',paused?'true':'false'); $('#livetxt').textContent=paused?'Jeda':'Live';
 });
 
+/* ---------- Pengolahan data truk (sumber: simulasi bawaan) ---------- */
+var REAL={errs:0,busy:false};
+function realProg(t){ t.prog=t.fin?1:(t.began?Math.min(.95,(Date.now()-t.began)/2100000):0); }
+function gateBay(g){ var m=/\d+/.exec(String(g||'')); if(!m)return -1; var n=+m[0]; return (n>=1&&n<=BAYS)?BAYS-n:-1; }
+function badge(txt,kind){
+  var el=document.querySelector('.demo'); if(!el)return;
+  el.textContent=txt; el.style.color='var(--'+kind+')'; el.style.background='var(--'+kind+'-soft)';
+}
+function resetFac(f){
+  f.trucks=[]; f.lot=[]; f.queue=[]; f.feed=[]; f.sel=null; f.done=0; f.spawnT=1e9;
+  f.bays=f.bays.map(function(){return null}); f.rb=f.rb.map(function(){return null});
+  f.fk.forEach(function(k){k.y=17;k.carry=false;k.dir=1});
+  ev(f,'ok','Terhubung ke data simulasi <b>'+f.id+'</b>');
+}
+var KMI_RE=/\bclient c\b/i;
+function spawnReal(f,r,init){
+  var want=gateBay(r.gate), b=(want>=0&&!f.bays[want])?want:freeBay(f), rb=f.rb.indexOf(null), t;
+  /* Contoh aturan: client tertentu hanya dilayani di dock belakang gudang */
+  var rearOnly=KMI_RE.test((r.client||'')+' '+(r.vendor||''));
+  var parkIt=(!!r.wx||r.st==='waiting')&&lotFree(f,40)>=0;
+  if(rearOnly&&!parkIt){
+    b=-1;
+    if(rb<0) return false;
+    if(!init){
+      if(!spawnClear(f)) return false;
+      if(f.queue.length||exitActive(f,null)||f.trucks.some(function(q){return q.rear&&(q.phase==='approach'||q.phase==='docking')})) return false;
+    }
+  }else if(!init&&!parkIt){
+    if(!spawnClear(f)) return false;
+    if(b<0&&rb<0&&f.queue.length>=6) return false;
+  }
+  t=newTruck(f);
+  t.id=r.id; t.dir=r.dir; t.ship=r.ship||'–'; t.city=r.origin||r.vendor||'–'; t.pallets=r.pal||0;
+  t.real=true; t.fin=!!r.wx; t.wx=!!r.wx; t.began=0; t.vendor=r.vendor||''; t.client=r.client||''; t.vtype=r.type||''; t.m=!!r.m; t.tin=r.in; t.stat=r.stat||''; t.gate=r.gate||''; t.wa=r.wa; t.wb=r.wb; t.st[t.dir==='in'?3:2]=r.in;
+  if(parkIt){
+    parkTo(f,t,lotFree(f,40)); t.pw=!r.wx; if(!init){ t.a=0; t.fi=true; }
+    f.rSeen[r.id+'|'+r.in]=1; f.trucks.push(t); setStep(t);
+    if(!init) ev(f,r.wx?'warn':'in','<b>'+t.id+'</b> '+(r.wx?'selesai, parkir menunggu keluar gerbang':'masuk, parkir menunggu proses ('+(t.dir==='in'?'bongkar':'muat')+')'));
+    return true;
+  }
+  if(init){
+    if(b>=0){ t.phase='working'; t.bay=b; t.x=bayX(b); t.y=CDOCK_Y; t.h=Math.PI/2; f.bays[b]=t; }
+    else if(rb>=0){ t.rear=true; t.rb=rb; t.bay=-1; t.phase='working'; t.x=rbayX(rb); t.y=RDOCK_Y; t.h=-Math.PI/2; t.th=t.h; f.rb[rb]=t; }
+    else if(f.queue.length<6){ t.phase='queued'; t.x=slotX(f.queue.length); t.y=ROAD_Y; t.h=Math.PI; f.queue.push(t); }
+    else return false;
+  }else{
+    var rearBusy=f.trucks.some(function(q){return q.rear&&(q.phase==='approach'||q.phase==='docking')});
+    if(b>=0&&!f.queue.length&&tryApproach(f,t,b)){ f.bays[b]=t; t.bay=b; }
+    else if(b<0&&rb>=0&&!f.queue.length&&!rearBusy&&!exitActive(f,null)){
+      t.rear=true; t.rb=rb; t.bay=-1; t.v=0; t.phase='approach'; setRoute(t,rearPts(rb),4.5,false); f.rb[rb]=t;
+    }else{ f.queue.push(t); toSlot(t,f.queue.length-1); }
+    ev(f,'in','<b>'+t.id+'</b> masuk gerbang ('+(t.dir==='in'?'bongkar':'muat')+')');
+  }
+  if(r.st==='working') t.began=r.start||Date.now();
+  if(r.wx) ev(f,'warn','<b>'+t.id+'</b> selesai, menunggu keluar gerbang');
+  f.rSeen[r.id+'|'+r.in]=1;
+  f.trucks.push(t); setStep(t);
+  return true;
+}
+function applyReal(d){
+  var f=F; if(!d||!d.trucks||d.error) return;
+  var first=!f.real;
+  if(first){ resetFac(f); f.real=true; f.rInit=true; f.rSeen={}; }
+  var live={};
+  d.trucks.forEach(function(r){
+    live[r.id]=1;
+    var t=null; f.trucks.forEach(function(x){ if(x.real&&x.id===r.id&&!x.gone) t=x; });
+    if(!t){
+      var key=r.id+'|'+r.in;
+      if(r.out||f.rSeen[key]) return;
+      r.wx=(r.st==='finish'&&!r.out);
+      spawnReal(f,r,f.rInit);
+      return;
+    }
+    if(r.pal) t.pallets=r.pal;
+    if(r.ship) t.ship=r.ship;
+    t.vendor=r.vendor||''; t.client=r.client||''; t.vtype=r.type||''; t.m=!!r.m; t.stat=r.stat||''; t.gate=r.gate||''; t.wa=r.wa; t.wb=r.wb; if(r.origin) t.city=r.origin;
+    if(r.st==='working'&&!t.began) t.began=r.start||Date.now();
+    t.wx=(r.st==='finish'&&!r.out);
+    if((r.out||r.st==='finish')&&!t.fin){ t.fin=true; ev(f,'ok','<b>'+t.id+'</b> selesai · '+dn(t)); }
+  });
+  f.trucks.forEach(function(t){ if(t.real&&!t.fin&&!live[t.id]) t.fin=true; if(t.real&&!live[t.id]) t.wx=false; });
+  f.rInit=false;
+  if(d.stock&&d.stock.cap>0){
+    f.cap=d.stock.cap; f.stock=d.stock.occ;
+    if(f.rStockDate!==d.stock.date){ f.rStockDate=d.stock.date; ev(f,'ok','Stok per <b>'+esc(d.stock.date)+'</b> · '+Math.round(d.stock.occ)+' dari '+Math.round(d.stock.cap)+' palet'); }
+  }
+  if(d.ot!=null) f.ot=d.ot;
+  f.trucks.forEach(function(t){ if(isLong(t)&&!t.alarmed){ t.alarmed=1; ev(f,'warn','<b>'+t.id+'</b> sudah '+fmtDur(Date.now()-t.tin)+' di lokasi'+(t.wx?' · menunggu keluar gerbang':'')); } });
+  f.rPlan=d.plan||null; f.rPlanRows=d.planRows||[];
+  if(first){ for(var i=0;i<24;i++){ f.hStock[i]=f.stock; f.hTruck[i]=f.trucks.length; f.hOt[i]=f.ot; } }
+  badge('Data simulasi · '+tfm.format(new Date()),'ok');
+  ui(true);
+}
+/* ---------- Sumber data: simulasi bawaan, tidak terhubung ke sistem atau spreadsheet apa pun ---------- */
+var SHEET_ID='demo';
+var GSC={days:8,tail:700,actTail:3000,onsiteH:14,outMin:45,maxTrucks:40,otDays:7,pollMs:15000,actMs:60000,invMs:600000,cacheMs:1800000};
+var GMON={jan:0,feb:1,mar:2,apr:3,mei:4,may:4,jun:5,jul:6,agu:7,aug:7,ags:7,sep:8,okt:9,oct:9,nov:10,des:11,dec:11};
+var GMN=[['Jan'],['Feb'],['Mar'],['Apr'],['Mei','May'],['Jun'],['Jul'],['Agu','Aug'],['Sep'],['Okt','Oct'],['Nov'],['Des','Dec']];
+
+/* --- util --- */
+function gMs(v){
+  if(v instanceof Date) return isNaN(v.getTime())?null:v.getTime();
+  var s=String(v==null?'':v).trim(); if(!s) return null; var m,a,b,mo,d,y;
+  if((m=/^(\d{1,2})-([A-Za-z]{3})[A-Za-z]*-(\d{2,4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/.exec(s))){
+    mo=GMON[m[2].toLowerCase()]; if(mo==null) return null; y=+m[3]; if(y<100) y+=2000;
+    return new Date(y,mo,+m[1],+(m[4]||0),+(m[5]||0),+(m[6]||0)).getTime();
+  }
+  if((m=/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?/.exec(s))){
+    return new Date(+m[1],+m[2]-1,+m[3],+(m[4]||0),+(m[5]||0),+(m[6]||0)).getTime();
+  }
+  if((m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/.exec(s))){
+    a=+m[1]; b=+m[2]; if(a>12){d=a;mo=b-1}else{mo=a-1;d=b}
+    return new Date(+m[3],mo,d,+(m[4]||0),+(m[5]||0),+(m[6]||0)).getTime();
+  }
+  return null;
+}
+function gHasTime(ms){ if(ms==null) return false; var d=new Date(ms); return !!(d.getHours()||d.getMinutes()); }
+function gDay(ms){ var d=new Date(ms); return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(); }
+function gMin(ms){ var d=new Date(ms); return d.getHours()*60+d.getMinutes(); }
+function gNorm(s){ return String(s==null?'':s).toUpperCase().replace(/[^A-Z0-9]/g,''); }
+function gTest(p){ return p==='TES'||p==='B111TES'||p.indexOf('NOPOLTES')>=0; }
+function gNum(v){ if(typeof v==='number') return v; var n=parseFloat(String(v==null?'':v).replace(/,/g,'').replace(/[^\d.\-]/g,'')); return isNaN(n)?0:n; }
+function gWin(s){ var m=/(\d{1,2})[:.](\d{2})\s*s\/d\s*(\d{1,2})[:.](\d{2})/i.exec(String(s||'')); return m?{a:+m[1]*60+ +m[2],b:+m[3]*60+ +m[4]}:null; }
+function gActSt(lus){
+  var s=String(lus||'').toLowerCase();
+  if(/finish|selesai|done|complete/.test(s)) return 'finish';
+  if(/start|process|progress|loading|unloading|going|bongkar|muat|working/.test(s)) return 'working';
+  return 'waiting';
+}
+function gYmd(d){ function p(n){return (n<10?'0':'')+n} return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+
+/* --- Data simulasi: dibangkitkan dari jam sekarang, semua nama dan nopol fiktif --- */
+var SIM={vendors:['Vendor Alfa','Vendor Beta','Vendor Gamma','Vendor Delta','Vendor Epsilon'],clients:['Client A','Client B','Client C','Client D','Client E','Client F','Client G','Client H'],types:['CDD','Fuso','Wingbox','Trailer 20ft','Trailer 40ft'],SLOT:10*60000};
+var TR_H=['Tanggal','Jam Masuk','Jam Keluar','No Polisi','Vendor Ekspedisi','Jenis Truk','Client / Owner','No DO / SJ','Status TRCM','Catatan','Timestamp','Status Mobil','Jam Keluar Gate'];
+var AC_H=['Aktivitas','Klien','Informasi Tanggal','ETA/ETD','Doc Number','Origin','Estimasi Palet','Nopol Planned','Windows Time'];
+function simRng(seed){ var a=seed>>>0; return function(){ a=(a+0x6D2B79F5)>>>0; var t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+function simHm(ms){ var d=new Date(ms); return (d.getHours()<10?'0':'')+d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes(); }
+function simPick(r,a){ return a[Math.floor(r()*a.length)]; }
+function simVisits(now){
+  var out=[], k0=Math.floor((now-26*3600000)/SIM.SLOT), k1=Math.floor((now+14*3600000)/SIM.SLOT), k;
+  for(k=k0;k<=k1;k++){
+    var r=simRng(k*7919+13);
+    if(r()>0.9) continue;
+    var tin=k*SIM.SLOT+Math.floor(r()*SIM.SLOT*0.98), v={tin:tin};
+    v.dir=r()<0.58?'in':'out'; v.client=simPick(r,SIM.clients); v.vendor=simPick(r,SIM.vendors); v.type=simPick(r,SIM.types);
+    v.plate='B'+(1000+Math.floor(r()*8999))+String.fromCharCode(65+Math.floor(r()*26),65+Math.floor(r()*26),65+Math.floor(r()*26));
+    v.doc='DO-'+(20000+Math.floor(r()*79999)); v.origin=simPick(r,CITIES); v.pal=Math.round(16+r()*16);
+    v.wait=(10+r()*40)*60000; v.work=(40+r()*90)*60000; if(r()<0.05) v.work+=(3+r()*1.5)*3600000;
+    v.gate=(3+r()*12)*60000; v.winEnd=tin+(-15+r()*70)*60000; v.hasPlate=r()<0.85; v.noshow=r()<0.07;
+    out.push(v);
+  }
+  return out;
+}
+function simTable(h,rows){ var m={}; h.forEach(function(n,i){ m[n]=i; }); return {h:m,rows:rows}; }
+function gTrcm(){
+  var now=Date.now(), rows=[];
+  simVisits(now).forEach(function(v){
+    if(v.tin>now||v.noshow) return;
+    var tw=v.tin+v.wait, td=tw+v.work, to=td+v.gate, gone=now>=to;
+    var st=now<tw?'Waiting':(now<td?'On Progress':'Finish');
+    rows.push([gYmd(new Date(v.tin)),simHm(v.tin),gone?simHm(to):'',v.plate,v.vendor,v.type,v.client,v.doc,st,v.dir==='out'?'Outbound muat':'Inbound bongkar','',gone?'Sudah keluar':'',gone?simHm(to):'']);
+  });
+  return Promise.resolve(simTable(TR_H,rows));
+}
+function gAct(){
+  var now=Date.now(), today=gYmd(new Date(now)), rows=[];
+  simVisits(now).forEach(function(v){
+    if(gYmd(new Date(v.tin))!==today) return;
+    rows.push([v.dir==='out'?'Outbound':'Inbound',v.client,today,today,v.doc,v.origin,v.pal,v.hasPlate?v.plate:'',simHm(v.winEnd-120*60000)+' s/d '+simHm(v.winEnd)]);
+  });
+  return Promise.resolve(simTable(AC_H,rows));
+}
+function gInv(){
+  return Promise.resolve(null); /* sheet baru tidak punya data stok */
+}
+
+/* --- logika pengolahan data truk dan rencana --- */
+function gStock(rows){
+  if(!rows) return null;
+  var best=-1, list=[], i, r, t;
+  for(i=0;i<rows.length;i++){
+    r=rows[i]; if(!/^\d+$/.test(String(r[1]).trim())) continue;
+    t=gMs(r[0]); if(t==null) continue;
+    list.push({t:t,cap:gNum(r[2]),occ:gNum(r[3]),raw:r[0]}); if(t>best) best=t;
+  }
+  var cap=0, occ=0, label='';
+  list.forEach(function(x){ if(x.t!==best) return; cap+=x.cap; occ+=x.occ; label=x.raw; });
+  if(cap<=0) return null;
+  if(label instanceof Date) label=label.getDate()+'-'+GMN[label.getMonth()][GMN[label.getMonth()].length-1]+'-'+String(label.getFullYear()).slice(2);
+  return {cap:cap,occ:occ,date:String(label)};
+}
+function gTimeMin(v){
+  if(v==null||v==='') return null;
+  if(v instanceof Date) return v.getHours()*60+v.getMinutes();
+  var m=/(\d{1,2})[:.](\d{2})/.exec(String(v)); return m?(+m[1])*60+ +m[2]:null;
+}
+function gComb(d,t){
+  var ms=gMs(d), m=gTimeMin(t); if(ms==null||m==null) return null;
+  return gDay(ms)+m*60000;
+}
+function gTrSt(s){
+  s=String(s||'').toLowerCase();
+  if(/finish|selesai|done|complete/.test(s)) return 'finish';
+  if(/on\s*progress|working|loading|unloading|bongkar|muat/.test(s)) return 'working';
+  return 'waiting';
+}
+function gBuild(T,A,invRows){
+  var now=Date.now(), th=T.h, ah=A.h, acts={}, plans=[];
+  /* rencana: dicocokkan ke data truk lewat Nopol Planned */
+  A.rows.forEach(function(r){
+    var d=gMs(r[ah['ETA/ETD']]); if(d==null) d=gMs(r[ah['Informasi Tanggal']]); if(d==null) return;
+    var p=gNorm(r[ah['Nopol Planned']]);
+    var a={d:d,p:p,dir:/out/i.test(String(r[ah['Aktivitas']]))?'out':'in',doc:String(r[ah['Doc Number']]||'').replace(/\s+/g,' ').trim(),
+      client:String(r[ah['Klien']]||''),origin:String(r[ah['Origin']]||''),pal:gNum(r[ah['Estimasi Palet']])||null,win:gWin(r[ah['Windows Time']]),start:null,gate:''};
+    plans.push(a); if(p) (acts[p]=acts[p]||[]).push(a);
+  });
+  function pick(plate,ms){
+    var list=acts[plate]||[], best=null, bd=1e18, ds=gDay(ms);
+    list.forEach(function(a){ if(Math.abs(gDay(a.d)-ds)>86400000*1.5) return; var dd=Math.abs(a.d-ms); if(dd<=bd){bd=dd;best=a;} });
+    return best;
+  }
+  /* data truk: satu baris = satu kunjungan truk */
+  var visits=[];
+  T.rows.forEach(function(r){
+    var p=gNorm(r[th['No Polisi']]); if(!p||gTest(p)) return;
+    var tin=gComb(r[th['Tanggal']],r[th['Jam Masuk']]); if(!tin) return;
+    var tsr=gMs(r[th['Timestamp']]);
+    if(tsr!=null&&tsr-tin>=6*3600000&&Math.abs(tin+12*3600000-tsr)<=2*3600000) tin+=12*3600000;
+    var tout=gComb(r[th['Tanggal']],r[th['Jam Keluar Gate']]); if(tout==null) tout=gComb(r[th['Tanggal']],r[th['Jam Keluar']]);
+    if(tout!=null&&tout<tin) tout+=86400000;
+    var gone=tout!=null||/sudah\s*keluar/i.test(String(r[th['Status Mobil']]||''));
+    if(gone&&tout==null) tout=tin;
+    var note=String(r[th['Catatan']]||'');
+    visits.push({id:p,in:tin,out:gone?tout:null,stat:String(r[th['Status TRCM']]||''),st:gTrSt(r[th['Status TRCM']]),
+      dir:/out/i.test(note)?'out':(/in|bongkar/i.test(note)?'in':null),vendor:String(r[th['Vendor Ekspedisi']]||''),type:String(r[th['Jenis Truk']]||''),
+      client:String(r[th['Client / Owner']]||''),doc:String(r[th['No DO / SJ']]||'')});
+  });
+  var tot=0, ok=0, from=now-GSC.otDays*86400000;
+  visits.forEach(function(v){
+    if(v.in<from) return; var a=pick(v.id,v.in); if(!a||!a.win) return;
+    tot++; if(gMin(v.in)<=a.win.b) ok++;
+  });
+  var ot=null;
+  var latest={};
+  visits.forEach(function(v){
+    if(v.out) return;
+    if(now-v.in>GSC.onsiteH*3600000||v.in>now+3600000) return;
+    if(!latest[v.id]||v.in>latest[v.id].in) latest[v.id]=v;
+  });
+  var list=Object.keys(latest).map(function(k){return latest[k]});
+  visits.forEach(function(v){ if(v.out&&v.out<=now&&now-v.out<=GSC.outMin*60000&&!latest[v.id]) list.push(v); });
+  list.sort(function(x,y){return y.in-x.in});
+  list=list.slice(0,GSC.maxTrucks).sort(function(x,y){return x.in-y.in});
+  var trucks=list.map(function(v){
+    return {id:v.id,stat:v.stat,dir:v.dir||'in',vendor:v.vendor,type:v.type,client:v.client,in:v.in,out:v.out||null,
+      ship:v.doc,origin:v.vendor,pal:null,st:v.st,start:v.st==='working'?v.in:null,gate:'',m:0,wa:null,wb:null};
+  });
+  /* ringkasan rencana hari ini: status diturunkan dari kunjungan truk yang cocok */
+  var today=gDay(now), plan={n:0,fin:0,work:0,wait:0,late:0,pal:0,palFin:0,inb:0,outb:0}, planRows=[], used={}, dq={actRows:A.rows.length,trcmRows:T.rows.length,actPlate:0,samples:[],um:[]};
+  plans.forEach(function(a){
+    if(gDay(a.d)!==today) return;
+    plan.n++; plan.pal+=a.pal||0; if(a.dir==='out') plan.outb++; else plan.inb++;
+    if(a.p){ dq.actPlate++; if(dq.samples.length<5) dq.samples.push(a.p); }
+    var v=null, dk=function(q){return String(q||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}, ad=dk(a.doc);
+    var ck=function(q){ return String(q||'').toLowerCase().replace(/\([^)]*\)/g,' ').replace(/[^a-z0-9 ]/g,' ').replace(/\b(pt|cv|tbk)\b/g,' ').split(/\s+/).filter(Boolean); };
+    visits.forEach(function(x){ if(gDay(x.in)!==today) return; var xd=dk(x.doc), ok=(a.p&&x.id===a.p)||(ad.length>=4&&xd.length>=4&&(xd===ad||xd.indexOf(ad)>=0||ad.indexOf(xd)>=0)); if(ok&&(!v||x.in>v.in)) v=x; });
+    var by=v?(a.p&&v.id===a.p?'nopol':'doc'):'';
+    if(!v){
+      var ka=ck(a.client), best=null;
+      if(ka.length) visits.forEach(function(x){
+        if(gDay(x.in)!==today||used[x.in+'|'+x.id]||(x.dir&&x.dir!==a.dir)||(!x.dir&&a.dir!=='in')) return;
+        var kb=ck(x.client), n=Math.min(ka.length,kb.length); if(!n) return;
+        for(var i=0;i<n;i++) if(ka[i]!==kb[i]) return;
+        if(!best||x.in<best.in) best=x;
+      });
+      if(best){ v=best; by='klien'; }
+    }
+    if(v) used[v.in+'|'+v.id]=1;
+    var s0=v?v.st:'waiting';
+    planRows.push({id:a.p||'–',by:by,tid:v?v.id:'',tin:v?v.in:null,dir:a.dir,client:a.client,doc:a.doc,origin:a.origin,pal:a.pal,win:a.win,
+      st:v?(s0==='finish'?'Selesai':(s0==='working'?'Proses':'Di lokasi')):((a.win&&gMin(now)>a.win.b)?'Lewat window':'Belum datang')});
+    if(s0==='finish'){ plan.fin++; plan.palFin+=a.pal||0; } else if(s0==='working') plan.work++; else{ plan.wait++; if(a.win&&gMin(now)>a.win.b) plan.late++; }
+  });
+  trucks.forEach(function(x){ if(x.m) return; var l=acts[x.id]; dq.um.push({id:x.id,in:x.in,why:(l&&l.length)?'tgl':'none',ad:(l&&l.length)?l[0].d:null}); });
+  var longN=trucks.filter(function(x){return !x.out&&now-x.in>4*3600000}).length;
+  planRows.sort(function(x,y){return (x.win?x.win.a:1e5)-(y.win?y.win.a:1e5)});
+  return {ts:now,trucks:trucks,stock:gStock(invRows),ot:ot,plan:plan,planRows:planRows,dq:dq,long:longN,matched:0};
+}
+
+/* --- tampilan loading awal + cache hasil terakhir --- */
+var LOAD={el:null,fails:0,hidden:false};
+function loadInit(){
+  var st=document.createElement('style');
+  st.textContent='#gl-load{position:absolute;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;background:var(--bg);transition:opacity .4s}'
+  +'#gl-load.hide{opacity:0;pointer-events:none}'
+  +'#gl-load .gl-box{width:min(340px,86%);padding:22px 24px;border-radius:14px;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 30px rgba(0,0,0,.18);text-align:center;color:var(--fg)}'
+  +'#gl-load .gl-spin{width:34px;height:34px;margin:0 auto 14px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:glspin .8s linear infinite}'
+  +'#gl-load .gl-t{font-weight:700;font-size:15px}#gl-load .gl-s{margin-top:4px;font-size:12px;color:var(--muted);min-height:1.4em}'
+  +'#gl-load ul{list-style:none;margin:14px 0 0;padding:0;text-align:left;display:grid;gap:7px;font-size:12.5px}'
+  +'#gl-load li{color:var(--muted);transition:color .25s}#gl-load li::before{content:"\\25CB";display:inline-block;width:18px}'
+  +'#gl-load li.on{color:var(--fg)}#gl-load li.on::before{content:"\\2713";color:var(--ok);font-weight:700}'
+  +'#gl-load .gl-x{margin-top:14px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--fg);font:inherit;font-size:12px;cursor:pointer}'
+  +'@keyframes glspin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){#gl-load .gl-spin{animation-duration:2.6s}}';
+  document.head.appendChild(st);
+  var el=document.createElement('div'); el.id='gl-load'; el.setAttribute('role','status'); el.setAttribute('aria-live','polite');
+  el.innerHTML='<div class="gl-box"><div class="gl-spin"></div><div class="gl-t">Memuat data gudang…</div><div class="gl-s">Menyiapkan data simulasi</div>'
+  +'<ul><li data-k="trcm">Truk di lokasi</li><li data-k="act">Rencana hari ini</li></ul>'
+  +'<button type="button" class="gl-x" hidden>Tampilkan simulasi</button></div>';
+  el.querySelector('.gl-x').onclick=function(){ loadDone(); };
+  document.getElementById('view').appendChild(el); LOAD.el=el;
+}
+function loadStep(k){ if(!LOAD.el) return; var li=LOAD.el.querySelector('li[data-k="'+k+'"]'); if(li) li.className='on'; var s=LOAD.el.querySelector('.gl-s'); if(s) s.textContent='Mengolah data…'; }
+function loadDone(){ if(!LOAD.el||LOAD.hidden) return; LOAD.hidden=true; LOAD.el.classList.add('hide'); var el=LOAD.el; setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },500); }
+function loadFail(msg){ if(!LOAD.el||LOAD.hidden) return; LOAD.fails++; LOAD.el.querySelector('.gl-s').textContent='Gagal: '+msg+' · mencoba lagi…'; if(LOAD.fails>=2) LOAD.el.querySelector('.gl-x').hidden=false; }
+function saveCache(d){ return; try{ localStorage.setItem('gl_cache',JSON.stringify({t:Date.now(),sid:SHEET_ID,d:d})); }catch(_){} }
+function readCache(){ return null;
+
+  try{ var c=JSON.parse(localStorage.getItem('gl_cache')||'null');
+    if(c&&c.sid===SHEET_ID&&c.d&&c.d.trucks&&Date.now()-c.t<GSC.cacheMs) return c; }catch(_){}
+  return null;
+}
+(function(){
+  var c=readCache();
+  badge('Memuat data…','warn');
+  if(c){
+    setTimeout(function(){ try{ applyReal(c.d); badge('Data tersimpan '+tfm.format(new Date(c.t))+' · memperbarui…','warn'); }catch(e){ if(window.console) console.warn('Cache:',e); } },0);
+  }else loadInit();
+})();
+
+/* --- Operator: filter daftar truk + kartu detail truk real --- */
+var OPF='all', _opKey='';
+var LONG_MS=4*3600000;
+function isLong(t){ return !!(t&&t.real&&t.tin&&t.phase!=='leaving'&&Date.now()-t.tin>LONG_MS); }
+function fmtDur(ms){ var m=Math.max(0,Math.round(ms/60000)); return (Math.floor(m/60)?Math.floor(m/60)+'j ':'')+(m%60)+'m'; }
+var OP_DEF=[['all','Semua'],['in','Inbound'],['out','Outbound'],['wait','Menunggu'],['work','Bekerja'],['long','Lama >4j']];
+var OPK='', _opCk=null;
+function opPass(t,k){
+  if(OPK&&(t.client||'')!==OPK) return false;
+  switch(k){ case 'in': return t.dir==='in'; case 'out': return t.dir==='out'; case 'wait': return t.real?(!t.began||!!t.wx):t.phase!=='working'; case 'work': return t.real?(!!t.began&&!t.wx):t.phase==='working'; case 'long': return isLong(t); }
+  return true;
+}
+function hayOf(t){ return [t.id,t.ship,dn(t),stLabel(t),t.city,t.vendor||'',t.client||'',t.vtype||'',t.dir==='in'?'inbound masuk':'outbound keluar'].join(' '); }
+function opChips(){
+  var box=document.getElementById('opf'), tabs=document.querySelector('.tabs');
+  if(!box){
+    if(!tabs) return;
+    var st=document.createElement('style');
+    st.textContent='#opf{display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding:7px 8px;border-bottom:1px solid var(--line)}'
+    +'#opf button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:99px;padding:3px 9px;font:600 11px var(--font-ui);cursor:pointer}'
+    +'#opf button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent}'
+    +'#opf button.w b{color:var(--warn)}#opf #opcsv{margin-left:auto}'
+    +'#opf select{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:8px;padding:3px 6px;font:600 11px var(--font-ui);max-width:150px}'
+    +'.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px 14px}'
+    +'.dgrid small{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}'
+    +'.dgrid b{font-size:13px;font-weight:600;word-break:break-word}.dnote{margin-top:10px;font-size:12px;color:var(--warn)}';
+    document.head.appendChild(st);
+    box=document.createElement('div'); box.id='opf';
+    box.innerHTML='<span id="opfc" style="display:contents"></span><select id="opk" aria-label="Filter klien"></select><button type="button" id="opcsv" title="Unduh daftar truk yang tampil (CSV)">CSV</button>';
+    tabs.parentNode.insertBefore(box,tabs.nextSibling);
+    box.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; if(b.id==='opcsv'){ if(tab==='plan') plCsv(); else opCsv(); return; } if(b.dataset.k){ if(tab==='plan') PLF=b.dataset.k; else OPF=b.dataset.k; _opKey=''; ui(true); } });
+    box.addEventListener('change',function(e){ if(e.target.id==='opk'){ OPK=e.target.value; _opKey=''; ui(true); } });
+  }
+  box.style.display=(tab==='truk'||tab==='plan')?'':'none';
+  var cl={}, sel=document.getElementById('opk');
+  F.trucks.forEach(function(t){ if(t.client) cl[t.client]=1; });
+  if(OPK&&!cl[OPK]) OPK='';
+  var names=Object.keys(cl).sort(), ck=names.join('|');
+  if(ck!==_opCk){
+    _opCk=ck; sel.innerHTML='';
+    var o0=document.createElement('option'); o0.value=''; o0.textContent='Semua klien'; sel.appendChild(o0);
+    names.forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
+  }
+  sel.value=OPK; sel.style.display=(names.length&&tab==='truk')?'':'none';
+  var html='', key=tab+'|'+OPF+'|'+OPK+'|'+PLF+'|';
+  (tab==='plan'?PL_DEF:OP_DEF).forEach(function(d){
+    var n=tab==='plan'?(F.rPlanRows||[]).filter(function(a){return plPass(a,d[0]);}).length:F.trucks.filter(function(t){return opPass(t,d[0]);}).length; key+=n+',';
+    if(tab==='plan') return void(html+='<button type="button" data-k="'+d[0]+'" aria-pressed="'+(PLF===d[0])+'"'+(d[0]==='Lewat window'&&n?' class="w"':'')+'>'+d[1]+' <b>'+n+'</b></button>');
+    html+='<button type="button" data-k="'+d[0]+'" aria-pressed="'+(OPF===d[0])+'"'+(d[0]==='long'&&n?' class="w"':'')+'>'+d[1]+' <b>'+n+'</b></button>';
+  });
+  if(key!==_opKey){ _opKey=key; document.getElementById('opfc').innerHTML=html; }
+}
+function plCsv(){
+  var rows=(F.rPlanRows||[]).filter(function(a){return plPass(a,PLF);});
+  function q(v){ v=String(v==null?'':v); if(/^[=+\-@]/.test(v)) v="'"+v; return '"'+v.replace(/"/g,'""')+'"'; }
+  var out=[['Nopol rencana','Arah','Klien','No Doc','Asal','Palet','Window','Status','Nopol aktual','Jam masuk'].map(q).join(';')];
+  rows.forEach(function(a){ out.push([a.id,a.dir==='out'?'Outbound':'Inbound',a.client,a.doc,a.origin,a.pal||'',a.win?opHM(a.win.a)+'-'+opHM(a.win.b):'',a.st,a.tid,a.tin?tfm.format(new Date(a.tin)):''].map(q).join(';')); });
+  var n=new Date(), blob=new Blob(['\ufeff'+out.join('\r\n')],{type:'text/csv;charset=utf-8'}), l=document.createElement('a');
+  l.href=URL.createObjectURL(blob); l.download='rencana-vs-realisasi_'+gYmd(n)+'.csv'; document.body.appendChild(l); l.click();
+  setTimeout(function(){ URL.revokeObjectURL(l.href); if(l.parentNode) l.parentNode.removeChild(l); },1000);
+}
+function opCsv(){
+  var rows=F.trucks.filter(function(t){return opPass(t,OPF)&&match(hayOf(t));});
+  var H=['Nopol','Jenis','Vendor','Tipe kendaraan','Klien','No. shipment','Asal','Palet','Dock / gate','Masuk','Lama di lokasi (menit)','Window','Ketepatan','Status','Cocok jadwal'];
+  function q(v){ v=String(v==null?'':v); if(/^[=+\-@]/.test(v)) v="'"+v; return '"'+v.replace(/"/g,'""')+'"'; }
+  var out=[H.map(q).join(';')];
+  rows.forEach(function(t){
+    var m=t.m, d=t.tin?new Date(t.tin):null;
+    out.push([t.id,t.dir==='in'?'Inbound':'Outbound',t.vendor,t.vtype,t.client,m?t.ship:'',m&&t.city!=='–'?t.city:'',m?t.pallets:'',dn(t)+(t.gate?' '+t.gate:''),
+      d?gYmd(d)+' '+tfm.format(d):'',t.tin?Math.max(0,Math.round((Date.now()-t.tin)/60000)):'',t.wa!=null?opHM(t.wa)+'-'+opHM(t.wb):'',
+      (t.tin&&t.wb!=null)?(gMin(t.tin)<=t.wb?'Tepat waktu':'Terlambat'):'',stLabel(t),t.real?(m?'Ya':'Belum'):''].map(q).join(';'));
+  });
+  var n=new Date(), stamp=gYmd(n)+'_'+('0'+n.getHours()).slice(-2)+('0'+n.getMinutes()).slice(-2);
+  var blob=new Blob(['\ufeff'+out.join('\r\n')],{type:'text/csv;charset=utf-8'}), a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='gudang-live_'+stamp+'.csv'; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); if(a.parentNode) a.parentNode.removeChild(a); },1000);
+}
+function opHM(m){ var h=Math.floor(m/60), n=m%60; return (h<10?'0':'')+h+':'+(n<10?'0':'')+n; }
+var SHIPMIN=false, _shipLast=null;
+(function(){
+  var st=document.createElement('style');
+  st.textContent='.shbtns{display:inline-flex;gap:6px;margin-left:6px}.shbtns button{width:28px;height:28px;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:8px;cursor:pointer;font:700 15px/1 var(--font-ui)}.shbtns button:hover{background:var(--panel-2)}';
+  document.head.appendChild(st);
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('[data-sh]'); if(!b) return;
+    if(b.dataset.sh==='min') SHIPMIN=!SHIPMIN; else if(b.dataset.sh==='x') F.sel=null;
+    ui(true);
+  });
+})();
+function realShipHTML(t){
+  var el=t.tin?Math.max(0,Math.round((Date.now()-t.tin)/60000)):null;
+  var ot=(t.tin&&t.wb!=null)?(gMin(t.tin)<=t.wb?'Tepat waktu':'Terlambat'):'–';
+  var F2=[
+    ['Jenis',t.dir==='in'?'Inbound (bongkar)':'Outbound (muat)'],
+    ['Vendor',t.vendor||'–'],['Tipe kendaraan',t.vtype||'–'],['Klien',t.client||'–'],
+    ['No. DO / shipment',t.ship&&t.ship!=='–'?t.ship:'–'],['Asal / vendor',t.city&&t.city!=='–'?t.city:'–'],
+    ['Dock / gate',dn(t)+(t.gate?' · '+t.gate:'')],
+    ['Masuk',t.tin?tfm.format(new Date(t.tin)):'–'],['Lama di lokasi',el==null?'–':(Math.floor(el/60)?Math.floor(el/60)+' j ':'')+(el%60)+' m'],
+    ['Status',t.stat||'–'],['Mulai kerja',t.began?tfm.format(new Date(t.began)):'–']
+  ];
+  var g='';
+  F2.forEach(function(x){ g+='<div><small>'+x[0]+'</small><b>'+esc(String(x[1]))+'</b></div>'; });
+  if(t.id!==_shipLast){ _shipLast=t.id; SHIPMIN=false; }
+  var hd='<div class="shiphead"'+(SHIPMIN?' style="margin-bottom:0;align-items:center"':'')+'><div><small>Detail truk</small><b class="mono">'+esc(t.id)+'</b></div>'
+    +'<div class="shipmeta"><span class="pill '+stClass(t)+'">'+stLabel(t)+'</span><span class="shbtns">'
+    +'<button type="button" data-sh="min" title="'+(SHIPMIN?'Perbesar':'Kecilkan')+'" aria-label="'+(SHIPMIN?'Perbesar':'Kecilkan')+'">'+(SHIPMIN?'+':'\u2013')+'</button>'
+    +'<button type="button" data-sh="x" title="Tutup" aria-label="Tutup">\u00d7</button></span></div></div>';
+  if(SHIPMIN) return hd;
+  return hd
+    +'<div class="dgrid">'+g+'</div>';
+}
+
+/* --- Kualitas data: ringkasan masalah pencocokan data truk <-> rencana --- */
+var DQD=null;
+function dqInit(){
+  if(document.getElementById('dqbtn')) return;
+  var st=document.createElement('style');
+  st.textContent='#dqbtn{font:700 12px var(--font-ui);padding:6px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}#dqbtn.w{color:var(--warn)}'
+  +'#dqm{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45)}#dqm.on{display:flex}'
+  +'#dqm .dqc{width:min(640px,92vw);max-height:86vh;overflow:auto;padding:18px 20px;border-radius:14px;background:var(--panel);border:1px solid var(--line);color:var(--fg);font-size:13px;line-height:1.5}'
+  +'#dqm h2{margin:0 0 10px;font-size:16px}#dqm p{margin:4px 0;color:var(--muted)}#dqm p b{color:var(--fg)}#dqm .wn{color:var(--warn);font-weight:600}'
+  +'#dqm table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}#dqm th,#dqm td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line)}#dqm th{color:var(--muted);font-weight:700}'
+  +'#dqm .x{float:right;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:8px;padding:3px 10px;cursor:pointer;font:600 12px var(--font-ui)}';
+  document.head.appendChild(st);
+  var b=document.createElement('button'); b.id='dqbtn'; b.type='button'; b.style.display='none';
+  var live=document.getElementById('live'); live.parentNode.insertBefore(b,live);
+  var m=document.createElement('div'); m.id='dqm'; m.innerHTML='<div class="dqc" role="dialog" aria-label="Kualitas data"></div>'; document.body.appendChild(m);
+  b.onclick=function(){ m.classList.add('on'); dqRender(); };
+  m.addEventListener('click',function(e){ if(e.target===m||(e.target.classList&&e.target.classList.contains('x'))) m.classList.remove('on'); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') m.classList.remove('on'); });
+}
+function dqUpdate(d){
+  DQD=d; dqInit();
+  var b=document.getElementById('dqbtn'), n=d.dq.um.length;
+  b.style.display='none'; b.textContent='Kualitas data'+(n?' · '+n+' tanpa rencana':''); b.className='';
+  if(document.getElementById('dqm').classList.contains('on')) dqRender();
+}
+function dqRender(){
+  var d=DQD, q=d&&d.dq, c=document.querySelector('#dqm .dqc'); if(!q) return;
+  var tot=d.trucks.length, mt=d.matched||0, pct=tot?Math.round(mt/tot*100):0, pn=d.plan?d.plan.n:0, h='';
+  h+='<button type="button" class="x">Tutup</button><h2>Kualitas data</h2>';
+  h+='<p>Data truk: <b>'+q.trcmRows+'</b> baris dibaca · truk di lokasi <b>'+tot+'</b> · punya rencana di rencana <b>'+mt+' ('+pct+'%)</b></p>';
+  h+='<p>rencana: <b>'+q.actRows+'</b> baris dibaca · bertanggal hari ini <b>'+pn+'</b> baris, nopol terisi di <b>'+q.actPlate+'</b> baris</p>';
+  if(!q.actRows) h+='<p class="wn">Tidak ada baris rencana yang terbaca.</p>';
+  else if(!pn) h+='<p>Tidak ada rencana bertanggal hari ini di rencana. Data truk tetap dari data truk.</p>';
+  else if(q.actPlate<pn) h+='<p>Nopol Planned hari ini baru terisi di '+q.actPlate+' dari '+pn+' baris. Rencana tanpa nopol tidak bisa dikaitkan ke truk di data truk.</p>';
+  if(q.samples.length) h+='<p>Contoh Nopol Planned hari ini (sudah dinormalkan): '+q.samples.map(function(x){return esc(x);}).join(', ')+'</p>';
+  if(q.um.length){
+    h+='<table><tr><th>Nopol (data truk)</th><th>Masuk</th><th>Keterangan</th></tr>';
+    q.um.slice(0,30).forEach(function(u){
+      h+='<tr><td>'+esc(u.id)+'</td><td>'+tfm.format(new Date(u.in))+'</td><td>'+(u.why==='tgl'?'Ada di rencana tapi tanggal planned berbeda ('+gYmd(new Date(u.ad))+')':'Belum ada rencana untuk nopol ini')+'</td></tr>';
+    });
+    h+='</table>'+(q.um.length>30?'<p>…dan '+(q.um.length-30)+' lainnya.</p>':'');
+  }else h+='<p>Semua truk di lokasi punya rencana di rencana.</p>';
+  c.innerHTML=h;
+}
+
+/* --- polling --- */
+function pollReal(){
+  if(paused||REAL.busy) return;
+  REAL.busy=true;
+  var now=Date.now();
+  var jA=(REAL.act&&now-REAL.actAt<GSC.actMs)?Promise.resolve(REAL.act):gAct().then(function(a){REAL.act=a;REAL.actAt=Date.now();loadStep('act');return a;});
+  var jI=Promise.resolve(null);
+  var jT=gTrcm().then(function(x){loadStep('trcm');return x;});
+  Promise.all([jT,jA,jI]).then(function(r){
+    REAL.errs=0; var d=gBuild(r[0],r[1],r[2]); saveCache(d); applyReal(d); loadDone();
+  }).catch(function(e){
+    REAL.errs++; if(window.console) console.warn('Gudang Live:',e);
+    var msg=String((e&&e.message)||e);
+    loadFail(msg.slice(0,60));
+    if(REAL.errs>=(F.real?2:1)) badge(F.real?'Data tertunda':'Gagal: '+msg.slice(0,48),'warn');
+  }).then(function(){ REAL.busy=false; });
+}
+setInterval(pollReal,GSC.pollMs); pollReal();
+
 /* ---------- Loop ---------- */
 var last=performance.now(), clockT=0;
 function frame(now){
+  requestAnimationFrame(frame);
+  try{ frame2(now); }catch(e){ showErr(e); }
+}
+function frame2(now){
   var dt=Math.min(.1,(now-last)/1000); last=now;
-  if(!paused){ FS.forEach(function(f){updFac(f,dt)}); updWk(dt); updSc(dt); CLK+=dt; if(tod.mode==='auto') tod.t=(tod.t+dt/180)%1; }
+  if(!paused){ FS.forEach(function(f){updFac(f,dt)}); updWk(dt); updSc(dt); CLK+=dt; }
+  if(tod.mode==='auto') tod.t=jktTod();
   if(tod.mode!=='auto') tod.t=TODT[tod.mode];
   render(); ui(false);
   clockT-=dt; if(clockT<=0){clockT=.5;$('#clock').textContent=tfs.format(new Date());}
-  requestAnimationFrame(frame);
 }
 setInterval(function(){T=null},2000);
 $('#clock').textContent=tfs.format(new Date());
