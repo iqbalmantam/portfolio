@@ -1577,7 +1577,7 @@ $('#live').addEventListener('click',function(){
 
 /* ---------- Pengolahan data truk (sumber: simulasi bawaan) ---------- */
 var REAL={errs:0,busy:false};
-function realProg(t){ t.prog=t.fin?1:(t.began?Math.min(.95,(Date.now()-t.began)/2100000):0); }
+function realProg(t){ t.prog=t.fin?1:(t.began?Math.min(.95,(Date.now()-t.began)/360000):0); }
 function gateBay(g){ var m=/\d+/.exec(String(g||'')); if(!m)return -1; var n=+m[0]; return (n>=1&&n<=BAYS)?BAYS-n:-1; }
 function badge(txt,kind){
   var el=document.querySelector('.demo'); if(!el)return;
@@ -1671,7 +1671,7 @@ function applyReal(d){
 }
 /* ---------- Sumber data: simulasi bawaan, tidak terhubung ke sistem atau spreadsheet apa pun ---------- */
 var SHEET_ID='demo';
-var GSC={days:8,tail:700,actTail:3000,onsiteH:14,outMin:45,maxTrucks:40,otDays:7,pollMs:15000,actMs:60000,invMs:600000,cacheMs:1800000};
+var GSC={days:8,tail:700,actTail:3000,onsiteH:14,outMin:45,maxTrucks:40,otDays:7,pollMs:5000,actMs:60000,invMs:600000,cacheMs:1800000};
 var GMON={jan:0,feb:1,mar:2,apr:3,mei:4,may:4,jun:5,jul:6,agu:7,aug:7,ags:7,sep:8,okt:9,oct:9,nov:10,des:11,dec:11};
 var GMN=[['Jan'],['Feb'],['Mar'],['Apr'],['Mei','May'],['Jun'],['Jul'],['Agu','Aug'],['Sep'],['Okt','Oct'],['Nov'],['Des','Dec']];
 
@@ -1708,23 +1708,23 @@ function gActSt(lus){
 function gYmd(d){ function p(n){return (n<10?'0':'')+n} return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
 
 /* --- Data simulasi: dibangkitkan dari jam sekarang, semua nama dan nopol fiktif --- */
-var SIM={vendors:['Vendor Alfa','Vendor Beta','Vendor Gamma','Vendor Delta','Vendor Epsilon'],clients:['Client A','Client B','Client C','Client D','Client E','Client F','Client G','Client H'],types:['CDD','Fuso','Wingbox','Trailer 20ft','Trailer 40ft'],SLOT:10*60000};
+var SIM={vendors:['Vendor Alfa','Vendor Beta','Vendor Gamma','Vendor Delta','Vendor Epsilon'],clients:['Client A','Client B','Client C','Client D','Client E','Client F','Client G','Client H'],types:['CDD','Fuso','Wingbox','Trailer 20ft','Trailer 40ft'],SLOT:30000};
 var TR_H=['Tanggal','Jam Masuk','Jam Keluar','No Polisi','Vendor Ekspedisi','Jenis Truk','Client / Owner','No DO / SJ','Status TRCM','Catatan','Timestamp','Status Mobil','Jam Keluar Gate'];
 var AC_H=['Aktivitas','Klien','Informasi Tanggal','ETA/ETD','Doc Number','Origin','Estimasi Palet','Nopol Planned','Windows Time'];
 function simRng(seed){ var a=seed>>>0; return function(){ a=(a+0x6D2B79F5)>>>0; var t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
 function simHm(ms){ var d=new Date(ms); return (d.getHours()<10?'0':'')+d.getHours()+':'+(d.getMinutes()<10?'0':'')+d.getMinutes(); }
 function simPick(r,a){ return a[Math.floor(r()*a.length)]; }
 function simVisits(now){
-  var out=[], k0=Math.floor((now-26*3600000)/SIM.SLOT), k1=Math.floor((now+14*3600000)/SIM.SLOT), k;
+  var out=[], k0=Math.floor((now-8*3600000)/SIM.SLOT), k1=Math.floor((now+6*3600000)/SIM.SLOT), k;
   for(k=k0;k<=k1;k++){
     var r=simRng(k*7919+13);
-    if(r()>0.9) continue;
+    if(r()>0.85) continue;
     var tin=k*SIM.SLOT+Math.floor(r()*SIM.SLOT*0.98), v={tin:tin};
     v.dir=r()<0.58?'in':'out'; v.client=simPick(r,SIM.clients); v.vendor=simPick(r,SIM.vendors); v.type=simPick(r,SIM.types);
     v.plate='B'+(1000+Math.floor(r()*8999))+String.fromCharCode(65+Math.floor(r()*26),65+Math.floor(r()*26),65+Math.floor(r()*26));
     v.doc='DO-'+(20000+Math.floor(r()*79999)); v.origin=simPick(r,CITIES); v.pal=Math.round(16+r()*16);
-    v.wait=(10+r()*40)*60000; v.work=(40+r()*90)*60000; if(r()<0.05) v.work+=(3+r()*1.5)*3600000;
-    v.gate=(3+r()*12)*60000; v.winEnd=tin+(-15+r()*70)*60000; v.hasPlate=r()<0.85; v.noshow=r()<0.07;
+    v.wait=(0.7+r()*1.8)*60000; v.work=(2.5+r()*4.5)*60000; if(r()<0.005) v.work+=(3+r()*1.5)*3600000;
+    v.gate=(0.4+r()*0.6)*60000; v.winEnd=tin+(-15+r()*70)*60000; /* window kedatangan */ v.hasPlate=r()<0.85; v.noshow=r()<0.07; v.planned=r()<0.25;
     out.push(v);
   }
   return out;
@@ -1743,7 +1743,7 @@ function gTrcm(){
 function gAct(){
   var now=Date.now(), today=gYmd(new Date(now)), rows=[];
   simVisits(now).forEach(function(v){
-    if(gYmd(new Date(v.tin))!==today) return;
+    if(!v.planned||gYmd(new Date(v.tin))!==today||v.tin<now-2*3600000||v.tin>now+5*3600000) return;
     rows.push([v.dir==='out'?'Outbound':'Inbound',v.client,today,today,v.doc,v.origin,v.pal,v.hasPlate?v.plate:'',simHm(v.winEnd-120*60000)+' s/d '+simHm(v.winEnd)]);
   });
   return Promise.resolve(simTable(AC_H,rows));
