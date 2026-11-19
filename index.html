@@ -54,6 +54,15 @@
         #category-tabs { scrollbar-width: none; -ms-overflow-style: none; }
         #category-tabs::-webkit-scrollbar { display: none; }
         @media (max-width: 767px) { #category-tabs { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); } }
+        /* Laptop pendek: padatkan hero supaya kartu solusi sudah terlihat di layar pertama */
+        @media (min-width: 1024px) and (max-height: 820px) {
+            main { padding-top: 1.5rem !important; }
+            .hero-block { margin-bottom: 1.75rem !important; }
+            .hero-block h1 { font-size: 3rem; margin-bottom: .5rem; }
+            .hero-block p { font-size: 1rem; }
+            .hero-stats { margin-top: 1rem; }
+            #solusi { scroll-margin-top: 5rem; }
+        }
         .glow-effect { position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0, 0, 0, 0) 70%); border-radius: 50%; pointer-events: none; }
     </style>
 </head>
@@ -93,7 +102,7 @@
     <main id="main" class="flex-grow max-w-7xl 2xl:max-w-[1440px] w-full mx-auto px-6 py-10 lg:py-14">
         
         <!-- Hero Section -->
-        <div class="text-center max-w-3xl lg:max-w-4xl mx-auto mb-10 lg:mb-14">
+        <div class="hero-block text-center max-w-3xl lg:max-w-4xl mx-auto mb-10 lg:mb-12">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
                 <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Portfolio aplikasi web &amp; desktop
             </div>
@@ -109,7 +118,7 @@
             <p class="text-slate-400 text-sm md:text-base lg:text-lg leading-relaxed max-w-3xl mx-auto">
                 Aplikasi bisnis siap pakai untuk UMKM, dan dashboard serta aplikasi custom untuk gudang dan perusahaan logistik.
             </p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
+            <div class="hero-actions flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
                 <a href="#solusi" class="inline-flex items-center justify-center gap-2 px-5 lg:px-7 min-h-[44px] lg:min-h-[48px] rounded-xl text-sm lg:text-base font-semibold bg-blue-600 hover:bg-blue-500 text-white transition w-full sm:w-auto">
                     <i data-lucide="layout-grid" class="w-4 h-4" aria-hidden="true"></i><span>Lihat solusi</span>
                 </a>
@@ -117,10 +126,10 @@
                     <i data-lucide="truck" class="w-4 h-4" aria-hidden="true"></i><span>Coba demo logistik</span>
                 </a>
             </div>
-            <dl class="grid grid-cols-3 gap-3 lg:gap-4 mt-8 lg:mt-10 max-w-md lg:max-w-xl mx-auto" aria-label="Ringkasan portfolio">
-                <div class="rounded-xl glass-card py-3"><dd id="stat-apps" class="text-xl lg:text-3xl font-extrabold text-white">21</dd><dt class="text-xs lg:text-sm text-slate-400">Aplikasi</dt></div>
-                <div class="rounded-xl glass-card py-3"><dd id="stat-cats" class="text-xl lg:text-3xl font-extrabold text-white">5</dd><dt class="text-xs lg:text-sm text-slate-400">Kategori</dt></div>
-                <div class="rounded-xl glass-card py-3"><dd id="stat-demo" class="text-xl lg:text-3xl font-extrabold text-white">4</dd><dt class="text-xs lg:text-sm text-slate-400">Demo langsung</dt></div>
+            <dl class="hero-stats grid grid-cols-3 gap-3 lg:gap-4 mt-8 max-w-md mx-auto" aria-label="Ringkasan portfolio">
+                <div class="rounded-xl glass-card py-3"><dd id="stat-apps" class="text-xl lg:text-2xl font-extrabold text-white">21</dd><dt class="text-xs lg:text-sm text-slate-400">Aplikasi</dt></div>
+                <div class="rounded-xl glass-card py-3"><dd id="stat-cats" class="text-xl lg:text-2xl font-extrabold text-white">5</dd><dt class="text-xs lg:text-sm text-slate-400">Kategori</dt></div>
+                <div class="rounded-xl glass-card py-3"><dd id="stat-demo" class="text-xl lg:text-2xl font-extrabold text-white">4</dd><dt class="text-xs lg:text-sm text-slate-400">Demo langsung</dt></div>
             </dl>
         </div>
 
