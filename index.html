@@ -71,13 +71,13 @@
     <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80 px-6 py-4">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
                     IM
                 </div>
                 <div>
                     <div class="font-bold text-lg text-white leading-none">iqbalmantam</div>
                     <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Applications Hub
+                        <span class="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span> Applications Hub
                     </p>
                 </div>
             </div>
@@ -95,24 +95,37 @@
         <!-- Hero Section -->
         <div class="text-center max-w-3xl mx-auto mb-10">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
-                <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Production-Grade Web Application Portfolio
+                <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Portfolio aplikasi web &amp; desktop
             </div>
             <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-3">
                 Ekosistem Aplikasi <br class="hidden sm:inline">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-300 to-blue-400">
                     untuk UMKM &amp; Logistik
                 </span>
             </h1>
             <p class="text-slate-300 font-medium text-sm md:text-base leading-relaxed mb-1">
-                Curated & Developed by Iqbal Mantam
+                Dibuat dan dikembangkan oleh Iqbal Mantam
             </p>
             <p class="text-slate-400 text-sm md:text-base leading-relaxed">
                 Aplikasi bisnis siap pakai untuk UMKM, dan dashboard serta aplikasi custom untuk gudang dan perusahaan logistik.
             </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
+                <a href="#solusi" class="inline-flex items-center justify-center gap-2 px-5 min-h-[44px] rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition w-full sm:w-auto">
+                    <i data-lucide="layout-grid" class="w-4 h-4" aria-hidden="true"></i><span>Lihat solusi</span>
+                </a>
+                <a href="#semua-aplikasi" onclick="selectCategory('Logistik &amp; Gudang')" class="inline-flex items-center justify-center gap-2 px-5 min-h-[44px] rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white transition w-full sm:w-auto">
+                    <i data-lucide="truck" class="w-4 h-4" aria-hidden="true"></i><span>Coba demo logistik</span>
+                </a>
+            </div>
+            <dl class="grid grid-cols-3 gap-3 mt-8 max-w-md mx-auto" aria-label="Ringkasan portfolio">
+                <div class="rounded-xl glass-card py-3"><dd id="stat-apps" class="text-xl font-extrabold text-white">20</dd><dt class="text-xs text-slate-400">Aplikasi</dt></div>
+                <div class="rounded-xl glass-card py-3"><dd id="stat-cats" class="text-xl font-extrabold text-white">5</dd><dt class="text-xs text-slate-400">Kategori</dt></div>
+                <div class="rounded-xl glass-card py-3"><dd id="stat-demo" class="text-xl font-extrabold text-white">4</dd><dt class="text-xs text-slate-400">Demo langsung</dt></div>
+            </dl>
         </div>
 
         <!-- Solusi: dua penawaran utama -->
-        <section id="solusi" aria-labelledby="solusi-title" class="mb-14">
+        <section id="solusi" aria-labelledby="solusi-title" class="mb-14 scroll-mt-24">
             <h2 id="solusi-title" class="text-xl md:text-2xl font-extrabold text-white text-center mb-2">Pilih solusi untuk bisnis Anda</h2>
             <p class="text-center text-slate-400 text-sm mb-8">Dua cara saya membantu: aplikasi siap pakai, atau dibuatkan sesuai kebutuhan.</p>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -186,7 +199,7 @@
         <p id="result-count" class="text-xs text-slate-400 mb-4" role="status" aria-live="polite"></p>
 
         <!-- App Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="apps-grid"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[480px]" id="apps-grid"></div>
         <noscript>
             <p class="text-slate-400 text-sm mb-3">Aktifkan JavaScript untuk tampilan lengkap. Daftar aplikasi:</p>
             <ul class="list-disc list-inside space-y-1 text-sm">
@@ -218,7 +231,7 @@
     <!-- Detail Modal -->
     <div id="app-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md hidden transition-opacity duration-300">
         <div class="glass-card w-full max-w-2xl rounded-2xl p-6 md:p-8 relative border border-indigo-500/30 shadow-2xl bg-slate-900/95 text-slate-200 max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <button type="button" onclick="closeModal()" aria-label="Tutup detail" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2.5 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition">
+            <button type="button" onclick="closeModal()" aria-label="Tutup detail" class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-slate-400 hover:text-white rounded-lg bg-slate-800/50 hover:bg-slate-800 transition">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             <div id="modal-content"></div>
@@ -227,7 +240,7 @@
 
     <!-- Footer -->
     <footer class="mt-16 border-t border-slate-800/80 glass-card py-6 px-6 text-center text-xs text-slate-400">
-        © 2026 Iqbal Mantam • Enterprise Application Portfolio
+        © 2026 Iqbal Mantam • Portfolio Aplikasi UMKM &amp; Logistik
         <span id="visitor-box" class="hidden"> • <span id="visitor-count">0</span> kunjungan</span>
     </footer>
 
@@ -597,7 +610,11 @@
         document.addEventListener("DOMContentLoaded", () => {
             renderCategoryTabs();
             renderApps();
-            lucide.createIcons();
+            const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+            setT("stat-apps", appsData.length);
+            setT("stat-cats", new Set(appsData.map(a => a.category)).size);
+            setT("stat-demo", appsData.filter(a => a.status === "Demo Tersedia").length);
+            lucide.createIcons({ attrs: { 'aria-hidden': 'true' } });
             const tabs = document.getElementById("category-tabs");
             if (tabs) {
                 tabs.addEventListener("click", (e) => {
@@ -613,9 +630,15 @@
             if (!container) return;
             container.innerHTML = categories.map(cat => `
                 <button type="button" data-cat="${cat}" aria-pressed="${cat === currentCategory}" class="px-4 min-h-[44px] rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${cat === currentCategory ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25' : 'glass-card text-slate-400 hover:text-white border border-slate-800'}">
-                    ${cat}
+                    ${cat} <span class="opacity-70 font-medium">${cat === "Semua" ? appsData.length : appsData.filter(a => a.category === cat).length}</span>
                 </button>
             `).join('');
+        }
+
+        function resetFilters() {
+            const si = document.getElementById("search-input");
+            if (si) si.value = "";
+            selectCategory("Semua");
         }
 
         function selectCategory(cat) { 
@@ -640,7 +663,7 @@
             const counter = document.getElementById("result-count");
             if (counter) counter.textContent = filtered.length + " dari " + appsData.length + " aplikasi";
             if (!filtered.length) {
-                container.innerHTML = '<div class="col-span-full text-center py-16 text-slate-400 text-sm">Tidak ada aplikasi yang cocok dengan pencarian Anda.</div>';
+                container.innerHTML = '<div class="col-span-full text-center py-16 text-slate-400 text-sm"><p class="mb-4">Tidak ada aplikasi yang cocok dengan pencarian Anda.</p><button type="button" onclick="resetFilters()" class="px-5 min-h-[44px] rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-semibold text-sm transition">Reset filter</button></div>';
                 return;
             }
 
@@ -648,17 +671,17 @@
                 <div class="app-card glass-card rounded-2xl p-6 flex flex-col justify-between">
                     <div>
                         <div class="flex items-start justify-between mb-4">
-                            <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md">
+                            <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
                                 <i data-lucide="${app.icon || 'app-window'}" class="w-5 h-5"></i>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
                         </div>
                         <h3 class="text-lg font-bold text-white mb-2">${app.title}</h3>
                         <p class="text-slate-400 text-sm leading-relaxed mb-4">${app.desc}</p>
                         
                         <!-- Tech Stack Badges -->
                         <div class="flex flex-wrap gap-1.5 mb-6">
-                            ${(app.techStack || []).map(t => `<span class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-800/80 text-slate-300 border border-slate-700/50">${t}</span>`).join('')}
+                            ${(app.techStack || []).map(t => `<span class="px-2 py-0.5 rounded-md text-xs font-medium bg-slate-800/80 text-slate-300 border border-slate-700/50">${t}</span>`).join('')}
                         </div>
                     </div>
                     
@@ -674,7 +697,7 @@
                     </div>
                 </div>
             `).join('');
-            lucide.createIcons();
+            lucide.createIcons({ attrs: { 'aria-hidden': 'true' } });
         }
 
         function openModal(id) {
@@ -685,13 +708,13 @@
             modalContent.innerHTML = `
                 <div class="flex items-start justify-between mb-6 pr-12">
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-lg">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg">
                             <i data-lucide="${app.icon || 'app-window'}" class="w-6 h-6"></i>
                         </div>
                         <div>
                             <div class="flex flex-wrap items-center gap-2 mb-1">
-                                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
-                                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${app.status || 'Active'}</span>
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${app.status || 'Active'}</span>
                             </div>
                             <h3 id="modal-title" class="text-xl font-extrabold text-white">${app.title}</h3>
                         </div>
@@ -708,31 +731,31 @@
                         <h4 class="font-bold text-indigo-400 flex items-center gap-2 mb-1.5 text-sm">
                             <i data-lucide="target" class="w-4 h-4"></i> Kegunaan Utama
                         </h4>
-                        <p class="text-xs md:text-sm text-slate-300 leading-relaxed">${app.kegunaan}</p>
+                        <p class="text-sm text-slate-300 leading-relaxed">${app.kegunaan}</p>
                     </div>
 
                     <div class="p-4 rounded-xl bg-slate-800/40 border border-slate-700/60">
                         <h4 class="font-bold text-emerald-400 flex items-center gap-2 mb-1.5 text-sm">
                             <i data-lucide="check-circle-2" class="w-4 h-4"></i> Kelebihan & Nilai Tambah
                         </h4>
-                        <p class="text-xs md:text-sm text-slate-300 leading-relaxed">${app.kelebihan}</p>
+                        <p class="text-sm text-slate-300 leading-relaxed">${app.kelebihan}</p>
                     </div>
 
                     <div class="p-4 rounded-xl bg-slate-800/40 border border-slate-700/60">
-                        <h4 class="font-bold text-purple-400 flex items-center gap-2 mb-2 text-sm">
+                        <h4 class="font-bold text-sky-300 flex items-center gap-2 mb-2 text-sm">
                             <i data-lucide="cpu" class="w-4 h-4"></i> Kemampuan & Fitur Teknis
                         </h4>
-                        <ul class="list-disc list-inside space-y-2 text-xs md:text-sm text-slate-300">
+                        <ul class="list-disc list-inside space-y-2 text-sm text-slate-300">
                             ${(app.kemampuan || []).map(k => `<li>${k}</li>`).join('')}
                         </ul>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button type="button" onclick="closeModal()" class="w-1/2 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition border border-slate-700">
+                    <button type="button" onclick="closeModal()" class="w-1/2 min-h-[44px] py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition border border-slate-700">
                         Tutup
                     </button>
-                    <a href="${app.url}" target="_blank" rel="noopener noreferrer" aria-label="Buka ${app.title} di tab baru" class="w-1/2 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-600/30">
+                    <a href="${app.url}" target="_blank" rel="noopener noreferrer" aria-label="Buka ${app.title} di tab baru" class="w-1/2 min-h-[44px] py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-600/30">
                         <span>Buka Aplikasi</span>
                         <i data-lucide="external-link" class="w-4 h-4"></i>
                     </a>
@@ -742,7 +765,7 @@
             lastFocus = document.activeElement;
             document.getElementById("app-modal").classList.remove("hidden");
             document.body.classList.add("overflow-hidden");
-            lucide.createIcons();
+            lucide.createIcons({ attrs: { 'aria-hidden': 'true' } });
             const closeBtn = document.querySelector('#app-modal [aria-label="Tutup detail"]');
             if (closeBtn) closeBtn.focus({ preventScroll: true });
         }
