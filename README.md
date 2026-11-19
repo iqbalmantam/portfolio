@@ -1,6 +1,6 @@
 # portfolio
 
-Landing page portofolio aplikasi Iqbal Mantam: 20 aplikasi untuk asesmen psikometri, rekrutmen, analisis data, bisnis, logistik, dan tools kreatif.
+Landing page portofolio aplikasi Iqbal Mantam: 21 aplikasi untuk asesmen psikometri, rekrutmen, analisis data, bisnis, logistik, dan tools kreatif.
 
 Live: https://iqbalmantam.github.io/portfolio/
 
