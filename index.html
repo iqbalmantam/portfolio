@@ -69,7 +69,7 @@
 
     <!-- Header Navigation -->
     <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-800/80 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="max-w-7xl 2xl:max-w-[1440px] mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
                     IM
@@ -90,51 +90,51 @@
     </header>
 
     <!-- Main Content -->
-    <main id="main" class="flex-grow max-w-7xl w-full mx-auto px-6 py-10">
+    <main id="main" class="flex-grow max-w-7xl 2xl:max-w-[1440px] w-full mx-auto px-6 py-10 lg:py-14">
         
         <!-- Hero Section -->
-        <div class="text-center max-w-3xl mx-auto mb-10">
+        <div class="text-center max-w-3xl lg:max-w-4xl mx-auto mb-10 lg:mb-14">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold mb-4">
                 <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Portfolio aplikasi web &amp; desktop
             </div>
-            <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-3">
+            <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-4">
                 Ekosistem Aplikasi <br class="hidden sm:inline">
                 <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-300 to-blue-400">
                     untuk UMKM &amp; Logistik
                 </span>
             </h1>
-            <p class="text-slate-300 font-medium text-sm md:text-base leading-relaxed mb-1">
+            <p class="text-slate-300 font-medium text-sm md:text-base lg:text-lg leading-relaxed mb-1">
                 Dibuat dan dikembangkan oleh Iqbal Mantam
             </p>
-            <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+            <p class="text-slate-400 text-sm md:text-base lg:text-lg leading-relaxed max-w-3xl mx-auto">
                 Aplikasi bisnis siap pakai untuk UMKM, dan dashboard serta aplikasi custom untuk gudang dan perusahaan logistik.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
-                <a href="#solusi" class="inline-flex items-center justify-center gap-2 px-5 min-h-[44px] rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition w-full sm:w-auto">
+                <a href="#solusi" class="inline-flex items-center justify-center gap-2 px-5 lg:px-7 min-h-[44px] lg:min-h-[48px] rounded-xl text-sm lg:text-base font-semibold bg-blue-600 hover:bg-blue-500 text-white transition w-full sm:w-auto">
                     <i data-lucide="layout-grid" class="w-4 h-4" aria-hidden="true"></i><span>Lihat solusi</span>
                 </a>
-                <a href="#semua-aplikasi" onclick="selectCategory('Logistik &amp; Gudang')" class="inline-flex items-center justify-center gap-2 px-5 min-h-[44px] rounded-xl text-sm font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white transition w-full sm:w-auto">
+                <a href="#semua-aplikasi" onclick="selectCategory('Logistik &amp; Gudang')" class="inline-flex items-center justify-center gap-2 px-5 lg:px-7 min-h-[44px] lg:min-h-[48px] rounded-xl text-sm lg:text-base font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white transition w-full sm:w-auto">
                     <i data-lucide="truck" class="w-4 h-4" aria-hidden="true"></i><span>Coba demo logistik</span>
                 </a>
             </div>
-            <dl class="grid grid-cols-3 gap-3 mt-8 max-w-md mx-auto" aria-label="Ringkasan portfolio">
-                <div class="rounded-xl glass-card py-3"><dd id="stat-apps" class="text-xl font-extrabold text-white">21</dd><dt class="text-xs text-slate-400">Aplikasi</dt></div>
-                <div class="rounded-xl glass-card py-3"><dd id="stat-cats" class="text-xl font-extrabold text-white">5</dd><dt class="text-xs text-slate-400">Kategori</dt></div>
-                <div class="rounded-xl glass-card py-3"><dd id="stat-demo" class="text-xl font-extrabold text-white">4</dd><dt class="text-xs text-slate-400">Demo langsung</dt></div>
+            <dl class="grid grid-cols-3 gap-3 lg:gap-4 mt-8 lg:mt-10 max-w-md lg:max-w-xl mx-auto" aria-label="Ringkasan portfolio">
+                <div class="rounded-xl glass-card py-3"><dd id="stat-apps" class="text-xl lg:text-3xl font-extrabold text-white">21</dd><dt class="text-xs lg:text-sm text-slate-400">Aplikasi</dt></div>
+                <div class="rounded-xl glass-card py-3"><dd id="stat-cats" class="text-xl lg:text-3xl font-extrabold text-white">5</dd><dt class="text-xs lg:text-sm text-slate-400">Kategori</dt></div>
+                <div class="rounded-xl glass-card py-3"><dd id="stat-demo" class="text-xl lg:text-3xl font-extrabold text-white">4</dd><dt class="text-xs lg:text-sm text-slate-400">Demo langsung</dt></div>
             </dl>
         </div>
 
         <!-- Solusi: dua penawaran utama -->
         <section id="solusi" aria-labelledby="solusi-title" class="mb-14 scroll-mt-24">
-            <h2 id="solusi-title" class="text-xl md:text-2xl font-extrabold text-white text-center mb-2">Pilih solusi untuk bisnis Anda</h2>
-            <p class="text-center text-slate-400 text-sm mb-8">Dua cara saya membantu: aplikasi siap pakai, atau dibuatkan sesuai kebutuhan.</p>
+            <h2 id="solusi-title" class="text-xl md:text-2xl lg:text-3xl font-extrabold text-white text-center mb-2">Pilih solusi untuk bisnis Anda</h2>
+            <p class="text-center text-slate-400 text-sm lg:text-base mb-8 lg:mb-10">Dua cara saya membantu: aplikasi siap pakai, atau dibuatkan sesuai kebutuhan.</p>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                <div class="glass-card rounded-2xl p-6 md:p-8 flex flex-col">
+                <div class="glass-card rounded-2xl p-6 md:p-8 lg:p-10 flex flex-col">
                     <span class="self-start px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 mb-4">Untuk UMKM</span>
-                    <h3 class="text-xl font-extrabold text-white mb-2">Aplikasi Bisnis Siap Pakai</h3>
-                    <p class="text-slate-300 text-sm leading-relaxed mb-4">Lima aplikasi desktop Windows untuk mengelola usaha Anda sendiri. Sekali bayar, tanpa langganan.</p>
-                    <ul class="space-y-2 text-sm text-slate-300 mb-6">
+                    <h3 class="text-xl lg:text-2xl font-extrabold text-white mb-2">Aplikasi Bisnis Siap Pakai</h3>
+                    <p class="text-slate-300 text-sm lg:text-base leading-relaxed mb-4">Lima aplikasi desktop Windows untuk mengelola usaha Anda sendiri. Sekali bayar, tanpa langganan.</p>
+                    <ul class="space-y-2 lg:space-y-2.5 text-sm lg:text-base text-slate-300 mb-6">
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span><strong class="text-white">HRMS:</strong> payroll PPh 21 dan BPJS, absensi, cuti, THR, dan pesangon</span></li>
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span><strong class="text-white">Finance:</strong> jurnal otomatis, laba rugi, neraca, arus kas, dan PPh 23</span></li>
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span><strong class="text-white">Sales:</strong> CRM, penawaran PDF, pipeline, dan komisi</span></li>
@@ -158,11 +158,11 @@
                     </div>
                 </div>
 
-                <div class="glass-card rounded-2xl p-6 md:p-8 flex flex-col">
+                <div class="glass-card rounded-2xl p-6 md:p-8 lg:p-10 flex flex-col">
                     <span class="self-start px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 border border-blue-500/30 text-blue-300 mb-4">Untuk perusahaan logistik</span>
-                    <h3 class="text-xl font-extrabold text-white mb-2">Dashboard dan Aplikasi Custom untuk Gudang</h3>
-                    <p class="text-slate-300 text-sm leading-relaxed mb-4">Dibuat sesuai proses operasional Anda, dari pemantauan harian sampai analisis. Contoh yang pernah saya bangun (demo memakai data simulasi):</p>
-                    <ul class="space-y-2 text-sm text-slate-300 mb-6">
+                    <h3 class="text-xl lg:text-2xl font-extrabold text-white mb-2">Dashboard dan Aplikasi Custom untuk Gudang</h3>
+                    <p class="text-slate-300 text-sm lg:text-base leading-relaxed mb-4">Dibuat sesuai proses operasional Anda, dari pemantauan harian sampai analisis. Contoh yang pernah saya bangun (demo memakai data simulasi):</p>
+                    <ul class="space-y-2 lg:space-y-2.5 text-sm lg:text-base text-slate-300 mb-6">
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span><a href="https://iqbalmantam.github.io/portfolio/demo/pic-racking/" target="_blank" rel="noopener noreferrer" class="underline decoration-slate-600 hover:decoration-indigo-400 hover:text-white">Monitoring dan audit racking dengan data inspeksi per PIC</a></span></li>
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span><a href="https://iqbalmantam.github.io/portfolio/demo/rak-view/" target="_blank" rel="noopener noreferrer" class="underline decoration-slate-600 hover:decoration-indigo-400 hover:text-white">Peta kapasitas rak: kondisi sekarang dan rencana penambahan</a></span></li>
                         <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 mt-0.5 shrink-0 text-emerald-400"></i><span><a href="https://iqbalmantam.github.io/portfolio/demo/gudang-live/" target="_blank" rel="noopener noreferrer" class="underline decoration-slate-600 hover:decoration-indigo-400 hover:text-white">Simulasi gudang langsung: truk, dock, dan pengiriman</a>, serta denah gudang 3D untuk tata letak</span></li>
@@ -182,13 +182,13 @@
             </div>
         </section>
 
-        <h2 id="semua-aplikasi" class="text-xl md:text-2xl font-extrabold text-white text-center mb-6 scroll-mt-24">Semua aplikasi</h2>
+        <h2 id="semua-aplikasi" class="text-xl md:text-2xl lg:text-3xl font-extrabold text-white text-center mb-6 lg:mb-8 scroll-mt-24">Semua aplikasi</h2>
 
         <!-- Filter & Search Controls -->
         <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
             <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto px-1 pt-1 pb-2 md:pb-1" id="category-tabs" role="group" aria-label="Filter kategori"></div>
 
-            <div class="relative w-full md:w-72">
+            <div class="relative w-full md:w-72 lg:w-80">
                 <i data-lucide="search" class="w-4 h-4 absolute z-10 pointer-events-none left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
                 <label for="search-input" class="sr-only">Cari aplikasi</label>
                 <input type="search" id="search-input" autocomplete="off" oninput="renderApps()" placeholder="Cari nama atau keyword..." 
@@ -199,7 +199,7 @@
         <p id="result-count" class="text-xs text-slate-400 mb-4" role="status" aria-live="polite"></p>
 
         <!-- App Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[480px]" id="apps-grid"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 min-h-[480px]" id="apps-grid"></div>
         <noscript>
             <p class="text-slate-400 text-sm mb-3">Aktifkan JavaScript untuk tampilan lengkap. Daftar aplikasi:</p>
             <ul class="list-disc list-inside space-y-1 text-sm">
@@ -695,8 +695,8 @@
                             </div>
                             <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${app.category}</span>
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2">${app.title}</h3>
-                        <p class="text-slate-400 text-sm leading-relaxed mb-4">${app.desc}</p>
+                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">${app.title}</h3>
+                        <p class="text-slate-400 text-sm lg:text-[15px] leading-relaxed mb-4">${app.desc}</p>
                         
                         <!-- Tech Stack Badges -->
                         <div class="flex flex-wrap gap-1.5 mb-6">
